@@ -327,6 +327,7 @@ fn is_link(meta: &fs::Metadata) -> bool {
 }
 
 fn create_directory(path: &Path) -> Result<()> {
+    #[cfg_attr(not(unix), allow(unused_mut))]
     let mut builder = fs::DirBuilder::new();
     #[cfg(unix)]
     {
