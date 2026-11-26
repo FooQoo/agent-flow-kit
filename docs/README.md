@@ -10,4 +10,4 @@ The [public site](../website/index.md) has the introduction, installation guide,
 | Verification | [Verification and benchmarks](dev/verification.md) | [検証とベンチマーク](ja/dev/verification.md) |
 | Workflow and MCP reference | [Reference index](reference/index.md) | [リファレンス](ja/reference/index.md) |
 
-Earlier notes are in [Internals](internals.md) and [Verification](verification.md). The [benchmark fixtures](../benchmarks/README.md) live alongside the test scripts.
+Earlier notes are in [Internals](internals.md) and [Verification](verification.md).

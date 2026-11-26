@@ -78,10 +78,6 @@ flowchart LR
 | `scripts/package.sh` | ビルド済みバイナリから `claude-code` / `codex` の配布ツリーを組み立てるスクリプト（開発用 `host` モード / CI リリース用 `all` モード）。 |
 | `.github/workflows/ci.yml` | 4ランナーのビルドマトリクス（Linux x64/arm64、macOS arm64/x64）、macOS Universal バイナリ合成（`lipo`）、スモークテスト、`SHA256SUMS` 生成。 |
 | `tests/integration/stdio_workflow.py` | 外部依存ゼロの Python 3 結合テスト兼ベンチマークハーネス。1試行あたり 21 回の MCP 呼び出しと 25 回の Hook 起動を実行し、バイト数とレイテンシを計測。 |
-| `benchmarks/README.md` | 決定論的プリフライト手順と、5シナリオのクライアント比較実験プロトコル仕様。 |
-| `benchmarks/task-759/run.py` | `codex app-server --stdio` を自動駆動して `probe` / `baseline` / `afk` を比較し、トークン消費・MCP 呼び出し回数・Hook レポート数を記録するドライバ。 |
-| `benchmarks/task-759/verify.sh` | `task-759` 実験ワークツリーをオフラインビルドし Playwright 検証を実行するスクリプト。 |
-| `benchmarks/task-759/acceptance.spec.ts` | デスクトップ幅・スマホ幅の双方でスリープ時間帯 UI と CLI の連動を検証する Playwright テスト。 |
 | `THIRD_PARTY_NOTICES.txt` | Agent Project 由来の移植コードに対する MIT ライセンス表記。パッケージ時に各プラグインへ自動コピーされる。 |
 
 ## ビルドとテストの実行コマンド

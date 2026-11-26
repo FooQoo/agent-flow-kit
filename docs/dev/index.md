@@ -78,10 +78,6 @@ Use this map to locate any subsystem, invariant, or packaging rule in the reposi
 | `scripts/package.sh` | Stages `claude-code` and `codex` plugin trees from compiled binaries in `host` (local) or `all` (CI release) mode. |
 | `.github/workflows/ci.yml` | 4-runner build matrix (Linux x64/arm64, macOS arm64/x64), universal macOS `lipo` merge, smoke test, and `SHA256SUMS` archive assembly. |
 | `tests/integration/stdio_workflow.py` | Deterministic zero-dependency Python 3 harness running 21 MCP calls and 25 hook invocations per trial with byte and latency telemetry. |
-| `benchmarks/README.md` | Deterministic preflight command and 5-scenario controlled client trial specification. |
-| `benchmarks/task-759/run.py` | Automated `codex app-server --stdio` comparison driver (`probe`, `baseline`, `afk`) capturing token usage, tool calls, and hook reports. |
-| `benchmarks/task-759/verify.sh` | Offline build and Playwright verification runner for `task-759` trial checkouts. |
-| `benchmarks/task-759/acceptance.spec.ts` | Playwright specification verifying desktop and phone-width UI/CLI sleep-schedule behavior in `task-759` checkouts. |
 | `THIRD_PARTY_NOTICES.txt` | MIT license attribution for upstream code adapted from Agent Project, copied into every packaged plugin. |
 
 ## Build and test commands

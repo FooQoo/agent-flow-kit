@@ -108,49 +108,7 @@ Observed across 5 consecutive release-binary runs of `stdio_workflow.py` on macO
 | **End-to-end trial wall time median** | `436 ms` | Covers 2 MCP server launches, 21 tool calls, file writes, 25 hook processes, and a 100 ms SQLite lock-timeout check. |
 
 > [!NOTE]
-> `stdio_workflow.py` reports `model_tokens: null` because it drives the protocol deterministically without a live LLM, and its byte counters measure MCP JSON-RPC traffic and hook stdout (excluding standard `Read`/`Write`/`Edit` file-tool I/O). Use the controlled client trial protocol below to measure live model token usage and adherence.
-
-## Controlled 5-scenario client trial protocol
-
-`benchmarks/README.md` defines the controlled experimental protocol for comparing four conditions:
-1. **Stock client** (baseline agent with no workflow plugin or prompt)
-2. **Prompt-only workflow** (same workflow instructions without AFK persistence/guards)
-3. **AFK** (plugin + MCP server + native hooks)
-4. **Agent Project** (where available on the target environment)
-
-### Experimental controls
-
-- Run every trial in a **separate directory** and **fresh client session** with the exact same client build, model ID, reasoning effort setting, tool permissions, and initial repository files.
-- Run `stdio_workflow.py` first as a deterministic preflight check for the AFK binary.
-- Rotate condition execution order across **at least 3 trials per scenario** to control for provider latency and caching variance.
-
-### The 5 evaluation scenarios
-
-| Scenario | Prompt & human intervention | Objective acceptance check |
-| --- | --- | --- |
-| **1. Simple** | Ask the agent to write a Markdown conversion guide and a separate example input/output pair. | Both artifacts exist on disk and the example conforms to every rule in the guide. |
-| **2. Clarification** | Ask for an importer fixture whose input format is deliberately left unspecified. When asked, reply: *"JSON with numeric value 42"*. | The agent asks **only** for the missing format decision (no redundant questions), and the saved fixture parses to `42`. |
-| **3. Additional request** | Ask for a fixture and verifier for `value: 42`. After the fixture is written, add a request to reject all other values. | Valid fixture passes, verifier rejects wrong values, and the original completed task artifact/evidence remains preserved. |
-| **4. Resume** | Start the fixture task and terminate the first session right after the fixture is written. Open a fresh session in the same directory and ask to continue. | The second session inspects `.afk/`, reuses the saved fixture without redoing completed work, and finishes verification. |
-| **5. Verification** | Ask for a signed-integer parser plus tests covering empty input, a negative integer, and non-numeric input. | All requested edge-case tests exist and pass, and `## Result` cites the actual verification commands executed. |
-
-### Automated repository harness example (`benchmarks/task-759/`)
-
-For larger real-codebase comparisons on Codex, `benchmarks/task-759/` provides an end-to-end harness against an Agent Project worktree task:
-
-- **`benchmarks/task-759/run.py`**: Drives `codex app-server --stdio` with isolated `HOME`, `CODEX_HOME`, `AGPJ_HOME`, `TZ=UTC`, and disabled web search/multi-agent flags. Supports `probe` (verifying `agent-flow-kit@afk-local` hooks and skill discovery and writing hook trust hashes to `config.toml`), `baseline`, and `afk` runs, logging JSONL wire events plus summary JSON (`usage` from `thread/tokenUsage/updated`, `afk_calls`, `afk_stop_reports` from `hook/completed`, and `elapsed_seconds`).
-- **`benchmarks/task-759/verify.sh` & `acceptance.spec.ts`**: Builds the trial checkout offline (`pnpm --dir web build` + `cargo build --offline --locked`) and runs Playwright (`chromium`, desktop `1280x900` and phone `390x844` viewports) to verify UI/CLI behavior objectively outside the agent session.
-
-### Required trial telemetry and privacy rules
-
-For every client trial—including **failed or aborted trials**—record:
-
-- **Environment & config**: Client version, model ID, reasoning effort, sandbox/approval settings.
-- **Outcome & quality**: Completion status, independent acceptance checks passed/failed, total elapsed wall time, human interventions (count and duration), total model turns, and MCP/standard tool call counts.
-- **Hook behavior**: Number of `Stop` progress banners observed, confirmation that `Stop` caused zero extra model requests, and confirmation that `Stop` text did not enter the next model input.
-- **Database state**: Matching `.afk/afk.db` metadata snapshots (plan status, revision, task counts, history events).
-- **Token usage**: Input, output, cached-input, and reasoning token counters when exposed by the client, alongside the **source** (e.g., `app-server` event vs provider dashboard) and **certainty of attribution**. Record `null`—never `0` or estimates—when a counter is unavailable.
-- **Redaction rule**: Never include raw user prompts, Markdown specification bodies, or human answer text in shared benchmark results.
+> `stdio_workflow.py` reports `model_tokens: null` because it drives the protocol deterministically without a live LLM, and its byte counters measure MCP JSON-RPC traffic and hook stdout (excluding standard `Read`/`Write`/`Edit` file-tool I/O).
 
 ## Current release gates
 

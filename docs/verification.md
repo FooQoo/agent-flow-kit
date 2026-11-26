@@ -17,7 +17,7 @@ The Codex package uses the compatibility manifest and a plugin-relative working 
 
 Five release-binary trials passed all fixture and state assertions. Each trial used 21 MCP calls, including deliberate error checks, and 25 hook invocations, including scope and lock checks. The six tool definitions used 5,557 bytes of compact JSON. Tool arguments used 994 bytes and tool text results used 5,348 bytes on the test paths. Hook stdout was 851 bytes. The shared skill was 2,627 bytes.
 
-Median elapsed time was 436 ms across the five trials. The median of the per-trial hook process medians was 7.07 ms, including process launch. The end-to-end timing covers two server launches, local file operations, and intentional busy-timeout testing. The synthetic model endpoints used fixed responses. Real input, output, cache and reasoning tokens and comparisons with stock clients or Agent Project are pending. See the [benchmark procedure](../benchmarks/README.md).
+Median elapsed time was 436 ms across the five trials. The median of the per-trial hook process medians was 7.07 ms, including process launch. The end-to-end timing covers two server launches, local file operations, and intentional busy-timeout testing. The synthetic model endpoints used fixed responses. Real input, output, cache and reasoning tokens and comparisons with stock clients or Agent Project are pending.
 
 ## Release gates
 
