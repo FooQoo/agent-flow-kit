@@ -4,11 +4,12 @@ import argparse
 import json
 import os
 from pathlib import Path
-import selectors
+import queue
 import sqlite3
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 
 
@@ -24,35 +25,46 @@ class Mcp:
             command.extend(("--root", str(root)))
         self.process = subprocess.Popen(
             command, cwd=launch_dir, env=environment,
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE, bufsize=0,
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE,
         )
         self.root = root
         self.registered_roots = [root.as_uri()] if roots else []
-        self.buffer = b""
+        self._lines = queue.Queue()
+        self._reader = threading.Thread(target=self._read_stdout, daemon=True)
+        self._reader.start()
         self.next_id = 0
         self.calls = 0
         self.input_bytes = 0
         self.output_bytes = 0
-        self.selector = selectors.DefaultSelector()
-        self.selector.register(self.process.stdout, selectors.EVENT_READ)
-        initialized = self.rpc("initialize", {
-            "protocolVersion": "2025-11-25",
-            "capabilities": {"roots": {}} if roots else {},
-            "clientInfo": {"name": name, "version": "1.0.0"},
-        })
-        assert initialized["serverInfo"]["name"] == "agent-flow-kit", initialized
-        self.write({"jsonrpc": "2.0", "method": "notifications/initialized"})
+        try:
+            initialized = self.rpc("initialize", {
+                "protocolVersion": "2025-11-25",
+                "capabilities": {"roots": {}} if roots else {},
+                "clientInfo": {"name": name, "version": "1.0.0"},
+            })
+            assert initialized["serverInfo"]["name"] == "agent-flow-kit", initialized
+            self.write({"jsonrpc": "2.0", "method": "notifications/initialized"})
+        except Exception:
+            self.close(check=False)
+            raise
+
+    def _read_stdout(self):
+        try:
+            for line in iter(self.process.stdout.readline, b""):
+                self._lines.put(line)
+        finally:
+            self._lines.put(None)
 
     def write(self, message):
         self.process.stdin.write(json.dumps(message).encode() + b"\n")
+        self.process.stdin.flush()
 
     def read(self):
-        while b"\n" not in self.buffer:
-            assert self.selector.select(10), "timed out reading AFK stdio"
-            block = os.read(self.process.stdout.fileno(), 65536)
-            assert block, "AFK closed stdio"
-            self.buffer += block
-        wire, self.buffer = self.buffer.split(b"\n", 1)
+        try:
+            wire = self._lines.get(timeout=10)
+        except queue.Empty as exc:
+            raise AssertionError("timed out reading AFK stdio") from exc
+        assert wire is not None, "AFK closed stdio"
         return json.loads(wire)
 
     def rpc(self, method, params):
@@ -77,16 +89,20 @@ class Mcp:
         assert bool(result.get("isError")) == error, (tool, value)
         return value if error else json.loads(value)
 
-    def close(self):
-        self.process.stdin.close()
+    def close(self, check=True):
+        if not self.process.stdin.closed:
+            self.process.stdin.close()
         try:
-            assert self.process.wait(timeout=5) == 0
+            code = self.process.wait(timeout=5)
+            if check:
+                assert code == 0, f"AFK exited with {code}"
         finally:
             if self.process.poll() is None:
                 self.process.kill()
                 self.process.wait()
-            self.selector.close()
-            self.process.stdout.close()
+            self._reader.join(timeout=2)
+            if not self.process.stdout.closed:
+                self.process.stdout.close()
 
     def __enter__(self):
         return self
@@ -131,8 +147,8 @@ def workflow(binary):
                 data["tool_response"] = payload
             tick = time.perf_counter()
             report = subprocess.run(
-                [binary, "--hook"], input=json.dumps(data), text=True,
-                capture_output=True, env=environment, timeout=2, check=True,
+                [str(binary), "--hook"], input=json.dumps(data), text=True, encoding="utf-8",
+                capture_output=True, env=environment, timeout=5, check=True,
             )
             hook_runs.append((1000 * (time.perf_counter() - tick), len(report.stdout.encode())))
             assert not report.stderr, report.stderr
@@ -217,8 +233,8 @@ def workflow(binary):
             pending_task = mcp.tool("start_next", plan_id=plan, model="example-one")
             assert pending_task == mcp.tool("start_next", plan_id=plan)
             pending_path = Path(pending_task["path"])
-            assert pending_path.read_text().count("Attempt 1:") == 1
-            assert "`afk-smoke` (model: `example-one`)" in pending_path.read_text()
+            assert pending_path.read_text(encoding="utf-8").count("Attempt 1:") == 1
+            assert "`afk-smoke` (model: `example-one`)" in pending_path.read_text(encoding="utf-8")
             note = "Changed fixture.json. Parsed it; exact value check remains."
             checkpoint = {
                 "op": "save_handoff", "task_id": pending_task["id"],
@@ -248,9 +264,9 @@ def workflow(binary):
             assert "different session" in mcp.tool("start_next", True, plan_id=plan)
             assert "not owned" in mcp.tool("update_plan", True, plan_id=plan, change=checkpoint)
             revised = mcp.tool("start_next", plan_id=plan, take_over=True)
-            assert "Attempt 1: `afk-smoke`" in pending_path.read_text()
-            assert "Attempt 2: `afk-successor` (model: `Unknown`)" in pending_path.read_text()
-            assert json.loads((project / "fixture.json").read_text()) == {"value": 42}
+            assert "Attempt 1: `afk-smoke`" in pending_path.read_text(encoding="utf-8")
+            assert "Attempt 2: `afk-successor` (model: `Unknown`)" in pending_path.read_text(encoding="utf-8")
+            assert json.loads((project / "fixture.json").read_text(encoding="utf-8")) == {"value": 42}
             result(revised["path"])
             mcp.tool("finish_task", plan_id=plan, task_id=revised["id"], attempt=revised["attempt"], verified=[1])
             result(new["plan_path"])
@@ -259,10 +275,13 @@ def workflow(binary):
             assert "2/2 complete" in (report := hook("Stop"))
             assert "Plan complete" in report
             route(done)
-            with sqlite3.connect(project / ".afk" / "afk.db", isolation_level=None) as lock:
+            lock = sqlite3.connect(project / ".afk" / "afk.db", isolation_level=None)
+            try:
                 lock.execute("BEGIN EXCLUSIVE")
                 assert not hook("Stop")
                 lock.execute("ROLLBACK")
+            finally:
+                lock.close()
             assert not hook("Stop")
             stats = [a + b for a, b in zip(stats, (mcp.calls, mcp.input_bytes, mcp.output_bytes))]
         return {
