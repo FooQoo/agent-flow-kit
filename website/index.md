@@ -21,10 +21,12 @@ landing:
     meta: Claude Code / Codex · Local-first (.afk/) · Rust + SQLite · Open Source
     demo:
       header: Claude Code / Codex + Agent Flow Kit
-      ariaLabel: Terminal flow showing Session 1 planning with one clarifying question and Session 2 resuming the next day with a mid-work requirement added
-      boundaryLabel: Next day · Resumed in a new session
-      sessions:
-        - label: "Session 1"
+      ariaLabel: Three-scene carousel showing planning with clarification, resuming in a new session the next day, and adapting mid-work to verified completion
+      pauseLabel: Pause animation
+      playLabel: Play animation
+      scenes:
+        - tab: "1. Plan & Clarify"
+          sessionLabel: "Session 1"
           turns:
             - kind: prompt
               text: Improve the search feature and add tests
@@ -34,27 +36,61 @@ landing:
               text: Sort by relevance
             - kind: saved
               text: "Updated the plan and completed 3/5 tasks. State saved in .afk/."
-        - label: "Session 2"
+          status:
+            title: Improve search feature
+            revision: rev 1
+            progressText: 3/5 (60%)
+            percent: 60
+            tasks:
+              - state: done
+                text: "#1–#3 Audit, spec & search logic"
+                tag: Done
+              - state: doing
+                text: "#4 Add automated tests"
+              - state: todo
+                text: "#5 Verify acceptance checks"
+        - tab: "2. Resume Next Day"
+          sessionLabel: "Next day · New session"
           turns:
             - kind: prompt
-              text: Continue from last time, and also fix the empty-results view
+              text: Continue from where we left off
             - kind: reply
-              text: "Loaded the saved plan. Keeping #1–#3 as verified evidence and adding the empty-results fix to the remaining work."
-      status:
-        title: Improve search feature
-        revision: rev 2
-        progressText: 3/6 (50%)
-        percent: 50
-        tasks:
-          - state: done
-            text: "#1–#3 Audit, spec & search logic"
-            tag: Kept as evidence
-          - state: doing
-            text: "#4 Add automated tests"
-            tag: Resumed
-          - state: todo
-            text: "#6 Fix empty-results view"
-            tag: Added mid-work
+              text: "Loaded the saved plan and notes from .afk/. Keeping #1–#3 intact and resuming with #4."
+          status:
+            title: Improve search feature
+            revision: rev 1
+            progressText: 3/5 (60%)
+            percent: 60
+            tasks:
+              - state: done
+                text: "#1–#3 Audit, spec & search logic"
+                tag: Kept as evidence
+              - state: doing
+                text: "#4 Add automated tests"
+                tag: Resumed
+              - state: todo
+                text: "#5 Verify acceptance checks"
+        - tab: "3. Adapt & Verify"
+          sessionLabel: "Session 2 · Follow-up request"
+          turns:
+            - kind: prompt
+              text: Also fix the empty-results view when 0 items match
+            - kind: reply
+              text: "Kept #1–#3 as verified evidence and added the empty-results fix to the remaining plan."
+            - kind: saved
+              text: "Verified all 6 acceptance checklists and recorded results in .afk/."
+          status:
+            title: Improve search feature
+            revision: rev 2
+            progressText: 6/6 (100%)
+            percent: 100
+            tasks:
+              - state: done
+                text: "#1–#5 Audit, search & tests"
+                tag: Verified
+              - state: done
+                text: "#6 Fix empty-results view"
+                tag: Added & verified
   problem:
     eyebrow: Problem
     title: Drafting a plan is easy. Keeping it intact is hard.

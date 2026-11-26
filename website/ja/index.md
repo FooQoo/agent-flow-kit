@@ -21,10 +21,12 @@ landing:
     meta: Claude Code / Codex 対応 · ローカル保存（.afk/） · オープンソース
     demo:
       header: Claude Code / Codex + Agent Flow Kit
-      ariaLabel: セッション1で計画と1点の確認を経て途中まで進め、翌日に別セッションで再開しつつ追加要望を計画へ反映する流れ
-      boundaryLabel: 翌日 · 別のセッションで再開
-      sessions:
-        - label: "セッション 1"
+      ariaLabel: 計画と確認、翌日の別セッションからの再開、途中変更と完了チェックの3シーンを示すカルーセル
+      pauseLabel: アニメーションを一時停止
+      playLabel: アニメーションを再生
+      scenes:
+        - tab: "1. 計画と確認"
+          sessionLabel: "セッション 1"
           turns:
             - kind: prompt
               text: 検索機能を改善して、テストも追加して
@@ -34,27 +36,61 @@ landing:
               text: 関連度順でお願い
             - kind: saved
               text: "回答を反映して進め、3/5 件まで完了しました。（記録先: .afk/）"
-        - label: "セッション 2"
+          status:
+            title: 検索機能の改善
+            revision: 第1版
+            progressText: 3/5 完了 (60%)
+            percent: 60
+            tasks:
+              - state: done
+                text: "#1–#3 調査・仕様整理・検索ロジック"
+                tag: 完了済み
+              - state: doing
+                text: "#4 テストの追加"
+              - state: todo
+                text: "#5 完了条件の検証"
+        - tab: "2. 翌日に再開"
+          sessionLabel: "翌日 · 別のセッション"
           turns:
             - kind: prompt
-              text: 前回の続きを進めて。検索結果が 0 件のときの表示も直して
+              text: 前回の続きを進めて
             - kind: reply
-              text: "前回の計画を読み込みました。終わった 3 件の記録は残したまま、残りに「0件表示の改善」を追加します。"
-      status:
-        title: 検索機能の改善
-        revision: 第2版
-        progressText: 3/6 完了 (50%)
-        percent: 50
-        tasks:
-          - state: done
-            text: "#1–#3 調査・仕様整理・検索ロジック"
-            tag: 完了記録を保持
-          - state: doing
-            text: "#4 テストの追加"
-            tag: 続きから再開
-          - state: todo
-            text: "#6 検索0件表示の改善"
-            tag: 途中で追加
+              text: ".afk/ から前回の計画と引き継ぎメモを読み込みました。終わった 3 件はそのままに、テストの追加から再開します。"
+          status:
+            title: 検索機能の改善
+            revision: 第1版
+            progressText: 3/5 完了 (60%)
+            percent: 60
+            tasks:
+              - state: done
+                text: "#1–#3 調査・仕様整理・検索ロジック"
+                tag: 記録を保持
+              - state: doing
+                text: "#4 テストの追加"
+                tag: 続きから再開
+              - state: todo
+                text: "#5 完了条件の検証"
+        - tab: "3. 途中追加と完了"
+          sessionLabel: "セッション 2 · 要望追加"
+          turns:
+            - kind: prompt
+              text: 検索結果が 0 件のときの表示も直して
+            - kind: reply
+              text: "終わった 3 件の記録は残したまま、残りに「0件表示の改善」を追加しました。"
+            - kind: saved
+              text: "全 6 件の完了条件をチェックし、結果を .afk/ に保存しました。"
+          status:
+            title: 検索機能の改善
+            revision: 第2版
+            progressText: 6/6 完了 (100%)
+            percent: 100
+            tasks:
+              - state: done
+                text: "#1–#5 調査・実装・テスト"
+                tag: 確認済み
+              - state: done
+                text: "#6 検索0件表示の改善"
+                tag: 途中で追加・完了
   problem:
     eyebrow: よくある課題
     title: 計画は立てられる。でも、そのあとが崩れる。

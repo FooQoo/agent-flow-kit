@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useData, withBase } from 'vitepress'
 import LandingIcon from './LandingIcon.vue'
+import HeroDemoCarousel from './HeroDemoCarousel.vue'
 
 type ProblemItem = { icon: string; title: string; text: string }
 type DiffRow = { axis: string; planMode: string; afk: string }
@@ -99,63 +100,9 @@ async function copyText(key: string, text: string) {
           <p class="lp-hero__meta">{{ c.hero.meta }}</p>
         </div>
 
-        <figure class="lp-hero__visual">
-          <div class="lp-demo" role="img" :aria-label="c.hero.demo.ariaLabel">
-            <div class="lp-demo__bar">
-              <span class="lp-demo__dots" aria-hidden="true">
-                <i /><i /><i />
-              </span>
-              <span class="lp-demo__title">{{ c.hero.demo.header }}</span>
-              <span v-if="c.hero.demo.sampleBadge" class="lp-demo__tag">{{ c.hero.demo.sampleBadge }}</span>
-            </div>
-            <div class="lp-demo__body">
-              <div
-                v-for="(session, sIdx) in c.hero.demo.sessions"
-                :key="sIdx"
-                class="lp-demo__session"
-              >
-                <div v-if="sIdx > 0" class="lp-demo__divider">
-                  <span>{{ c.hero.demo.boundaryLabel }}</span>
-                </div>
-                <p class="lp-demo__session-label">{{ session.label }}</p>
-                <div v-for="(turn, tIdx) in session.turns" :key="tIdx" class="lp-demo__turn">
-                  <p v-if="turn.kind === 'prompt'" class="lp-demo__prompt">
-                    <span class="lp-demo__caret" aria-hidden="true">❯</span> {{ turn.text }}
-                  </p>
-                  <p v-else-if="turn.kind === 'question'" class="lp-demo__question">{{ turn.text }}</p>
-                  <p v-else-if="turn.kind === 'saved'" class="lp-demo__saved">{{ turn.text }}</p>
-                  <p v-else class="lp-demo__reply">{{ turn.text }}</p>
-                </div>
-              </div>
-
-              <div class="lp-demo__status">
-                <div class="lp-demo__status-head">
-                  <span class="lp-demo__badge">[AFK]</span>
-                  <span class="lp-demo__plan">{{ c.hero.demo.status.title }}</span>
-                  <span class="lp-demo__rev">{{ c.hero.demo.status.revision }}</span>
-                  <span class="lp-demo__pct">{{ c.hero.demo.status.progressText }}</span>
-                </div>
-                <div class="lp-progress-bar" aria-hidden="true">
-                  <span class="lp-progress-bar__fill" :style="{ width: `${c.hero.demo.status.percent}%` }" />
-                </div>
-                <ul class="lp-demo__tasks">
-                  <li
-                    v-for="task in c.hero.demo.status.tasks"
-                    :key="task.text"
-                    :class="`is-${task.state}`"
-                  >
-                    <span class="lp-state-mark" aria-hidden="true">
-                      {{ task.state === 'done' ? '✓' : task.state === 'doing' ? '●' : '○' }}
-                    </span>
-                    <span class="lp-demo__task-text">{{ task.text }}</span>
-                    <span v-if="task.tag" class="lp-demo__task-tag">{{ task.tag }}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <figcaption v-if="c.hero.demo.caption" class="lp-demo__caption">{{ c.hero.demo.caption }}</figcaption>
-        </figure>
+        <div class="lp-hero__visual">
+          <HeroDemoCarousel :demo="c.hero.demo" />
+        </div>
       </div>
     </section>
 
