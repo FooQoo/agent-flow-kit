@@ -187,7 +187,13 @@ onBeforeUnmount(() => {
         :aria-pressed="isPaused"
         @click="togglePause"
       >
-        {{ isPaused ? '▶' : '⏸' }}
+        <svg v-if="isPaused" width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M4.5 2.75a.75.75 0 0 1 1.14-.64l8 5.25a.75.75 0 0 1 0 1.28l-8 5.25A.75.75 0 0 1 4.5 13.25V2.75Z" />
+        </svg>
+        <svg v-else width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <rect x="3.5" y="2.5" width="3" height="11" rx="1" />
+          <rect x="9.5" y="2.5" width="3" height="11" rx="1" />
+        </svg>
       </button>
     </div>
 
@@ -312,17 +318,18 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.04);
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.05);
   color: #c9d4de;
-  font-size: 11px;
   cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s, color 0.2s;
 }
 .lp-demo__toggle:hover {
-  border-color: rgba(164, 224, 189, 0.5);
+  border-color: rgba(164, 224, 189, 0.55);
+  background: rgba(164, 224, 189, 0.12);
   color: var(--lp-mint);
 }
 .lp-demo__toggle:focus-visible,
@@ -359,15 +366,22 @@ onBeforeUnmount(() => {
 }
 
 .lp-demo__viewport {
-  min-height: 360px;
+  box-sizing: border-box;
+  height: 452px;
   padding: 16px 18px 12px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+@media (min-width: 640px) {
+  .lp-demo__viewport {
+    height: 416px;
+  }
 }
 .lp-demo__body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 332px;
+  min-height: 100%;
   font-family: var(--vp-font-family-mono);
   font-size: 12.5px;
   line-height: 1.6;
