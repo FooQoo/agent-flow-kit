@@ -94,7 +94,6 @@ See [Installation](https://fooqoo.github.io/agent-flow-kit/guide/installation) f
 - [Installation](https://fooqoo.github.io/agent-flow-kit/guide/installation) ([source](website/guide/installation.md)) — Claude Code, Codex, standalone MCP, and Windows setup.
 - [Quickstart](https://fooqoo.github.io/agent-flow-kit/guide/quickstart) ([source](website/guide/quickstart.md)) — End-to-end walkthrough of your first plan.
 - [Development & reference notes](docs/README.md) — Architecture, internals, and verification.
-- [Benchmarks](benchmarks/README.md) — Deterministic protocol and hook latency benchmarks.
 
 ## Source reuse
 
