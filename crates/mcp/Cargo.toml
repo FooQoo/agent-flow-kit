@@ -1,0 +1,24 @@
+[package]
+name = "afk-mcp"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "afk"
+path = "src/main.rs"
+
+[dependencies]
+afk-core = { path = "../core" }
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+schemars.workspace = true
+sha2.workspace = true
+tempfile.workspace = true
+uuid.workspace = true
+rmcp = { version = "=3.11.0", features = ["transport-io"] }
+tokio = { version = "1", features = ["macros", "rt", "sync", "time", "io-std"] }
+url = "2"
+
+[dev-dependencies]

@@ -1,0 +1,11 @@
+{
+  "name": "afk",
+  "description": "Agent Flow Kit for Claude Code",
+  "owner": {"name": "FooQoo"},
+  "plugins": [
+    {
+      "name": "agent-flow-kit",
+      "source": "./plugins/claude-code"
+    }
+  ]
+}

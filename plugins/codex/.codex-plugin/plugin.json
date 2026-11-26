@@ -1,0 +1,13 @@
+{
+  "name": "agent-flow-kit",
+  "version": "0.1.0",
+  "description": "Plan, clarify, execute, and resume local work.",
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "Agent Flow Kit",
+    "shortDescription": "Delegate work and follow its progress",
+    "category": "Productivity"
+  },
+  "mcpServers": "./.mcp.json"
+}

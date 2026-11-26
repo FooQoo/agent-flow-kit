@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+base=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+case "$(uname -s):$(uname -m)" in
+    Darwin:arm64|Darwin:x86_64) binary=afk-macos ;;
+    Linux:x86_64) binary=afk-linux-x64 ;;
+    Linux:aarch64|Linux:arm64) binary=afk-linux-arm64 ;;
+    *) printf '%s\n' 'AFK: unsupported OS or architecture' >&2; exit 1 ;;
+esac
+if [ ! -x "$base/bin/$binary" ]; then
+    printf 'AFK: missing bundled binary %s\n' "$binary" >&2
+    exit 1
+fi
+exec "$base/bin/$binary" "$@"

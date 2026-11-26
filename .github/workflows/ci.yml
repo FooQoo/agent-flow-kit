@@ -1,0 +1,78 @@
+name: Build and verify AFK
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {runner: ubuntu-22.04, binary: afk-linux-x64}
+          - {runner: ubuntu-22.04-arm, binary: afk-linux-arm64}
+          - {runner: macos-15, binary: afk-macos-arm64}
+          - {runner: macos-15-intel, binary: afk-macos-x64}
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v5
+      - run: rustup toolchain install 1.96.0 --profile minimal --component rustfmt,clippy
+      - run: cargo +1.96.0 fmt --all --check
+      - run: cargo +1.96.0 clippy --locked --all-targets -- -D warnings
+      - run: cargo +1.96.0 test --locked --workspace
+      - run: cargo +1.96.0 build --locked --release
+      - run: python3 tests/integration/stdio_workflow.py target/release/afk
+      - name: Stage binary and inspect dependencies
+        env:
+          BINARY: ${{ matrix.binary }}
+        run: |
+          mkdir -p staged
+          install -m 755 target/release/afk "staged/$BINARY"
+          wc -c "staged/$BINARY"
+          if [ "$(uname -s)" = Darwin ]; then
+            otool -L "staged/$BINARY"
+          else
+            ldd "staged/$BINARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.binary }}
+          path: staged/${{ matrix.binary }}
+          if-no-files-found: error
+
+  package:
+    needs: build
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          path: binaries
+          pattern: afk-*
+          merge-multiple: true
+      - name: Assemble and smoke-test the release archives
+        run: |
+          lipo -create binaries/afk-macos-arm64 binaries/afk-macos-x64 -output binaries/afk-macos
+          lipo -verify_arch arm64 x86_64 binaries/afk-macos
+          codesign --sign - --force binaries/afk-macos
+          scripts/package.sh binaries packages all
+          python3 tests/integration/stdio_workflow.py packages/codex/plugins/agent-flow-kit/run
+          mkdir -p dist
+          for client in claude-code codex; do
+            tar -C packages -czf "dist/afk-$client.tar.gz" "$client"
+          done
+          for binary in afk-macos afk-linux-x64 afk-linux-arm64; do
+            chmod +x "binaries/$binary"
+            tar -C binaries -czf "dist/$binary.tar.gz" "$binary"
+          done
+          (cd dist && shasum -a 256 ./*.tar.gz > SHA256SUMS)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: afk-release-packages
+          path: dist/
+          if-no-files-found: error

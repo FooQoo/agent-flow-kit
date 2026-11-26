@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "mcp__.*afk__(record_request|open_plan|update_plan|update_question|start_next|finish_task)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/bin/sh\" \"${PLUGIN_ROOT}/run\" --hook",
+            "timeout": 1
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/bin/sh\" \"${PLUGIN_ROOT}/run\" --hook",
+            "timeout": 1
+          }
+        ]
+      }
+    ]
+  }
+}

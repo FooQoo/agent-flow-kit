@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "afk": {
+      "type": "stdio",
+      "command": "/bin/sh",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/run"]
+    }
+  }
+}

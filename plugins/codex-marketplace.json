@@ -1,0 +1,12 @@
+{
+  "name": "afk-local",
+  "interface": {"displayName": "Agent Flow Kit"},
+  "plugins": [
+    {
+      "name": "agent-flow-kit",
+      "source": {"source": "local", "path": "./plugins/agent-flow-kit"},
+      "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+      "category": "Productivity"
+    }
+  ]
+}

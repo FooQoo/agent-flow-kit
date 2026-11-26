@@ -1,0 +1,23 @@
+:root {
+  --vp-c-brand-1: #0a7a56;
+  --vp-c-brand-2: #086648;
+  --vp-c-brand-3: #0a7a56;
+  --vp-c-brand-soft: rgb(13 148 104 / 12%);
+  --vp-home-hero-name-color: var(--vp-c-brand-1);
+}
+
+.dark {
+  --vp-c-brand-1: #7ee8b8;
+  --vp-c-brand-2: #5cdba2;
+  --vp-c-brand-3: #34d399;
+  --vp-c-brand-soft: rgb(126 232 184 / 12%);
+  --vp-button-brand-text: #062118;
+}
+
+.vp-doc :is(p, li):lang(ja) {
+  line-height: 1.9;
+}
+
+:where(.VPHero, .vp-doc) :is(h1, h2, h3):lang(ja) {
+  word-break: auto-phrase;
+}
