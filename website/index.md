@@ -14,7 +14,7 @@ landing:
     lead: Agent Flow Kit is a lightweight harness for AI agents to carry out work. From request and plan to clarifying questions, execution, and completion—extend your existing agent without leaving your workflow.
     primary:
       text: Get started
-      link: /guide/
+      link: /guide/installation
     secondary:
       text: GitHub
       link: https://github.com/FooQoo/agent-flow-kit
@@ -255,13 +255,13 @@ landing:
     installNote: Network access is only needed on the first run for a given version to fetch and verify the release binary. For offline archives and hook setup, see the
     guideLink:
       text: Installation guide
-      link: /guide/
+      link: /guide/installation
     cta:
       tagline: "Delegate work.\nStay in control."
       sub: A lightweight harness for AI agents to carry out work.
       primary:
         text: Get started with AFK
-        link: /guide/
+        link: /guide/installation
       secondary:
         text: GitHub
         link: https://github.com/FooQoo/agent-flow-kit

@@ -5,7 +5,8 @@
 Agent Flow Kit（AFK）は、Claude Code、Codex などの MCP クライアントに任せた作業を計画し、進捗を確認して続きから再開するためのツールです。計画、質問、検証結果はプロジェクトの `.afk/` に残ります。
 
 - [ドキュメントサイト](https://fooqoo.github.io/agent-flow-kit/ja/)
-- [Git からインストール](https://fooqoo.github.io/agent-flow-kit/ja/guide/)（[ローカル原文](website/ja/guide/index.md)）
+- [Agent Flow Kit とは](https://fooqoo.github.io/agent-flow-kit/ja/guide/getting-started)（[ローカル原文](website/ja/guide/getting-started.md)）
+- [インストール](https://fooqoo.github.io/agent-flow-kit/ja/guide/installation)（[ローカル原文](website/ja/guide/installation.md)）
 - [クイックスタート](https://fooqoo.github.io/agent-flow-kit/ja/guide/quickstart)（[ローカル原文](website/ja/guide/quickstart.md)）
 
 ## クイックインストール

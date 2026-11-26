@@ -5,8 +5,9 @@
 Agent Flow Kit (AFK) gives Claude Code, Codex, and other MCP clients a way to plan, track, and resume work. The plan, questions, and checked results stay in `.afk/` in your project.
 
 - [Documentation site](https://fooqoo.github.io/agent-flow-kit/)
-- [Install AFK from Git](https://fooqoo.github.io/agent-flow-kit/guide/) ([local source](website/guide/index.md))
-- [Try the quickstart](https://fooqoo.github.io/agent-flow-kit/guide/quickstart) ([local source](website/guide/quickstart.md))
+- [Getting Started](https://fooqoo.github.io/agent-flow-kit/guide/getting-started) ([local source](website/guide/getting-started.md))
+- [Installation](https://fooqoo.github.io/agent-flow-kit/guide/installation) ([local source](website/guide/installation.md))
+- [Quickstart](https://fooqoo.github.io/agent-flow-kit/guide/quickstart) ([local source](website/guide/quickstart.md))
 
 ## Quick install
 

@@ -14,7 +14,7 @@ landing:
     lead: Agent Flow Kit は、AI の仕事の遂行を支える軽量なハーネスです。依頼から計画、質問、実行、完了まで。使い慣れた開発環境のまま、AI に仕事を任せられるようにします。
     primary:
       text: はじめる
-      link: /ja/guide/
+      link: /ja/guide/installation
     secondary:
       text: GitHub
       link: https://github.com/FooQoo/agent-flow-kit
@@ -255,13 +255,13 @@ landing:
     installNote: 初回起動時のみ GitHub Releases から対象 OS バイナリを自動取得し SHA256 検証します。オフライン導入や Hook の確認手順は
     guideLink:
       text: 導入ガイドを見る
-      link: /ja/guide/
+      link: /ja/guide/installation
     cta:
       tagline: "Delegate work.\nStay in control."
       sub: AI に仕事を任せる、新しい当たり前。
       primary:
         text: Agent Flow Kit をはじめる
-        link: /ja/guide/
+        link: /ja/guide/installation
       secondary:
         text: GitHub
         link: https://github.com/FooQoo/agent-flow-kit
