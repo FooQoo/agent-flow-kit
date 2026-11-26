@@ -94,7 +94,3 @@ codex plugin add agent-flow-kit@afk
 - [インストール](https://fooqoo.github.io/agent-flow-kit/ja/guide/installation)（[原文](website/ja/guide/installation.md)） — Claude Code / Codex / 単体 MCP / Windows での導入方法。
 - [クイックスタート](https://fooqoo.github.io/agent-flow-kit/ja/guide/quickstart)（[原文](website/ja/guide/quickstart.md)） — 最初の計画から完了・引き継ぎまでの流れ。
 - [開発・参照資料](docs/README.md) — 内部設計・検証手順。
-
-## ソースの再利用
-
-状態の型定義と Markdown の見出し処理は、MIT ライセンスの [Agent Project](https://github.com/FooQoo/agent-project)（コミット `095bc9bdad1c10cee9fb11ed25d616416e990167`）から取り入れました。詳しくは [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt) を参照してください。

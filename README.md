@@ -94,7 +94,3 @@ See [Installation](https://fooqoo.github.io/agent-flow-kit/guide/installation) f
 - [Installation](https://fooqoo.github.io/agent-flow-kit/guide/installation) ([source](website/guide/installation.md)) — Claude Code, Codex, standalone MCP, and Windows setup.
 - [Quickstart](https://fooqoo.github.io/agent-flow-kit/guide/quickstart) ([source](website/guide/quickstart.md)) — End-to-end walkthrough of your first plan.
 - [Development & reference notes](docs/README.md) — Architecture, internals, and verification.
-
-## Source reuse
-
-AFK's state enum and Markdown title helpers were adapted from [Agent Project](https://github.com/FooQoo/agent-project) at commit `095bc9bdad1c10cee9fb11ed25d616416e990167` under the MIT license. See [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt).
