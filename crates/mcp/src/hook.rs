@@ -7,7 +7,7 @@ use std::{
     time::Duration,
 };
 
-use afk_core::{NextAction, Progress, Store};
+use afk_core::{Column, NextAction, Progress, Store, TaskSummary};
 use anyhow::{Context, Result, ensure};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -102,9 +102,10 @@ fn handle(base: &Path, event: Event) -> Result<Option<String>> {
             let file = fs::File::open(&claim)?;
             let marker: Marker = serde_json::from_reader(file.take(8192))?;
             ensure!(event.cwd.canonicalize()? == marker.cwd, "hook cwd changed");
-            let progress =
-                Store::open_existing(&marker.route.afk_root)?.progress(marker.route.plan_id)?;
-            Ok(Some(report(&progress)))
+            let store = Store::open_existing(&marker.route.afk_root)?;
+            let progress = store.progress(marker.route.plan_id)?;
+            let tasks = store.task_summaries(marker.route.plan_id)?;
+            Ok(Some(report(&progress, &tasks)))
         }
         _ => Ok(None),
     }
@@ -152,29 +153,93 @@ fn route(value: &Value, depth: u8) -> Option<Route> {
     }
 }
 
-fn report(progress: &Progress) -> String {
-    let mut report = if progress.revision == 0 {
-        format!(
-            "AFK · {} [{}] · task count pending",
+const BAR_WIDTH: usize = 10;
+const MAX_TASK_LINES: usize = 6;
+
+fn progress_bar(done: u32, total: u32) -> (String, u32) {
+    let percent = done
+        .saturating_mul(100)
+        .saturating_add(total / 2)
+        .checked_div(total)
+        .unwrap_or(0)
+        .min(100);
+    let filled = (done as usize)
+        .saturating_mul(BAR_WIDTH)
+        .saturating_add((total as usize) / 2)
+        .checked_div(total as usize)
+        .unwrap_or(0)
+        .min(BAR_WIDTH);
+    let mut bar = String::with_capacity(BAR_WIDTH * 3);
+    for _ in 0..filled {
+        bar.push('█');
+    }
+    for _ in filled..BAR_WIDTH {
+        bar.push('░');
+    }
+    (bar, percent)
+}
+
+fn task_symbol(status: Column) -> char {
+    match status {
+        Column::Done => '✓',
+        Column::Doing => '●',
+        Column::Todo | Column::Backlog => '○',
+    }
+}
+
+fn report(progress: &Progress, tasks: &[TaskSummary]) -> String {
+    let mut lines = Vec::new();
+    if progress.revision == 0 {
+        lines.push(format!(
+            "[AFK] {} [{}] · task count pending",
             progress.title,
             progress.status.label()
-        )
+        ));
     } else {
-        format!(
-            "AFK · {} [{}] · {}/{} complete",
+        let (bar, percent) = progress_bar(progress.done, progress.total);
+        lines.push(format!(
+            "[AFK] {} [{}] · {bar} {}/{} complete ({percent}%)",
             progress.title,
             progress.status.label(),
             progress.done,
             progress.total
-        )
-    };
-    if progress.total > progress.done {
-        let remaining = progress.total - progress.done - progress.doing;
-        report.push_str(&format!(
-            " · {} in progress / {remaining} unstarted",
-            progress.doing
         ));
     }
+
+    if !tasks.is_empty() {
+        if tasks.len() <= MAX_TASK_LINES {
+            for task in tasks {
+                lines.push(format!("{} {}", task_symbol(task.status), task.title));
+            }
+        } else {
+            let mut done_count = 0usize;
+            let mut remaining = Vec::new();
+            for task in tasks {
+                if task.status == Column::Done {
+                    done_count += 1;
+                } else {
+                    remaining.push(task);
+                }
+            }
+            if done_count > 0 {
+                lines.push(format!("✓ {done_count} completed"));
+            }
+            let budget = if done_count > 0 {
+                MAX_TASK_LINES - 1
+            } else {
+                MAX_TASK_LINES
+            };
+            let shown = remaining.len().min(budget);
+            for task in &remaining[..shown] {
+                lines.push(format!("{} {}", task_symbol(task.status), task.title));
+            }
+            let hidden = remaining.len().saturating_sub(shown);
+            if hidden > 0 {
+                lines.push(format!("… +{hidden} more"));
+            }
+        }
+    }
+
     let next = match &progress.next {
         NextAction::PrepareQuestion { id } => format!("Prepare question #{id}"),
         NextAction::WaitForAnswer { title, count, .. } => {
@@ -191,7 +256,116 @@ fn report(progress: &Progress) -> String {
         NextAction::VerifyPlan => "Verify the plan's acceptance conditions".to_owned(),
         NextAction::Complete => "Plan complete".to_owned(),
     };
-    report.push('\n');
-    report.push_str(&next);
-    report
+    lines.push(next);
+    lines.join("\n")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn sample_progress(done: u32, total: u32, status: Column, next: NextAction) -> Progress {
+        Progress {
+            plan_id: 1,
+            title: "Improve search".to_owned(),
+            revision: 1,
+            status,
+            total,
+            done,
+            doing: u32::from(status == Column::Doing),
+            next,
+        }
+    }
+
+    #[test]
+    fn formats_bar_and_task_list() {
+        let progress = sample_progress(
+            3,
+            5,
+            Column::Doing,
+            NextAction::ResumeTask {
+                id: 4,
+                title: "Add tests".to_owned(),
+            },
+        );
+        let tasks = vec![
+            TaskSummary {
+                id: 1,
+                title: "Audit".to_owned(),
+                status: Column::Done,
+            },
+            TaskSummary {
+                id: 2,
+                title: "Spec".to_owned(),
+                status: Column::Done,
+            },
+            TaskSummary {
+                id: 3,
+                title: "Implement".to_owned(),
+                status: Column::Done,
+            },
+            TaskSummary {
+                id: 4,
+                title: "Add tests".to_owned(),
+                status: Column::Doing,
+            },
+            TaskSummary {
+                id: 5,
+                title: "Verify".to_owned(),
+                status: Column::Todo,
+            },
+        ];
+        let out = report(&progress, &tasks);
+        assert!(out.starts_with("[AFK] Improve search [Doing] · ██████░░░░ 3/5 complete (60%)\n"));
+        assert!(out.contains("✓ Audit\n✓ Spec\n✓ Implement\n● Add tests\n○ Verify\n"));
+        assert!(out.ends_with("In progress · Add tests"));
+    }
+
+    #[test]
+    fn collapses_completed_tasks_when_list_is_long() {
+        let progress = sample_progress(
+            4,
+            8,
+            Column::Doing,
+            NextAction::ResumeTask {
+                id: 5,
+                title: "Task 5".to_owned(),
+            },
+        );
+        let tasks: Vec<TaskSummary> = (1..=8)
+            .map(|i| TaskSummary {
+                id: i,
+                title: format!("Task {i}"),
+                status: if i <= 4 {
+                    Column::Done
+                } else if i == 5 {
+                    Column::Doing
+                } else {
+                    Column::Todo
+                },
+            })
+            .collect();
+        let out = report(&progress, &tasks);
+        assert!(out.contains("█████░░░░░ 4/8 complete (50%)"));
+        assert!(out.contains("✓ 4 completed\n● Task 5\n○ Task 6\n○ Task 7\n○ Task 8\n"));
+    }
+
+    #[test]
+    fn keeps_pending_message_before_first_revision() {
+        let progress = Progress {
+            plan_id: 1,
+            title: "Plan #1".to_owned(),
+            revision: 0,
+            status: Column::Backlog,
+            total: 0,
+            done: 0,
+            doing: 0,
+            next: NextAction::PreparePlan,
+        };
+        let out = report(&progress, &[]);
+        assert_eq!(
+            out,
+            "[AFK] Plan #1 [Backlog] · task count pending\nPrepare the plan"
+        );
+    }
 }

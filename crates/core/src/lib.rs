@@ -19,7 +19,7 @@ use serde::Serialize;
 
 pub use column::Column;
 pub use plan::{Draft, PlanView, TaskRun};
-pub use progress::{NextAction, Progress};
+pub use progress::{NextAction, Progress, TaskSummary};
 
 const SCHEMA_VERSION: i64 = 2;
 

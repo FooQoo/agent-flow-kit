@@ -31,9 +31,44 @@ pub enum NextAction {
     Complete,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TaskSummary {
+    pub id: i64,
+    pub title: String,
+    pub status: Column,
+}
+
 impl Store {
     pub fn progress(&self, id: i64) -> Result<Progress> {
         self.read(|tx| self.snapshot(tx, id))
+    }
+
+    pub fn task_summaries(&self, id: i64) -> Result<Vec<TaskSummary>> {
+        self.read(|tx| {
+            plan_exists(tx, id)?;
+            let mut stmt = tx.prepare(
+                "SELECT id,title,status FROM tasks WHERE plan_id=?1 AND lifecycle='active' ORDER BY id",
+            )?;
+            let rows = stmt.query_map([id], |r| {
+                let task_id: i64 = r.get(0)?;
+                let title: Option<String> = r.get(1)?;
+                let raw_status: String = r.get(2)?;
+                Ok((task_id, title, raw_status))
+            })?;
+            let mut out = Vec::new();
+            for row in rows {
+                let (task_id, title, raw_status) = row?;
+                let status = raw_status
+                    .parse::<Column>()
+                    .map_err(|()| anyhow::anyhow!("unknown task status {raw_status}"))?;
+                out.push(TaskSummary {
+                    id: task_id,
+                    title: title.unwrap_or_else(|| format!("Task #{task_id}")),
+                    status,
+                });
+            }
+            Ok(out)
+        })
     }
 
     pub fn recent_plans(&self, before: i64) -> Result<Vec<Progress>> {
