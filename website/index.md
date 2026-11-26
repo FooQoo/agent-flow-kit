@@ -254,7 +254,7 @@ landing:
           percent: 60
           tag: 0 model tokens
           detail: Aggregated directly from SQLite (read-only, fail-open)
-          banner: "AFK · Improve search feature [Doing] · 3/5 complete · Next: Add automated tests"
+          banner: "[AFK] Improve search feature [Doing] · ██████░░░░ 3/5 complete (60%)"
   efficiency:
     eyebrow: State Machine & Efficiency
     title: Backed by a state machine, not polite prompts.

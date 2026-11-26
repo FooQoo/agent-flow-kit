@@ -47,7 +47,7 @@ Agent: Drafted a 5-task plan. One question before starting:
        Should results be sorted by relevance or newest first?
 You:   Relevance. Go ahead.
 Agent: Updated the plan and started executing tasks in order.
-[AFK]  AFK · Improve search feature [Doing] · 3/5 complete · Next: Add tests
+[AFK]  Improve search feature [Doing] · ██████░░░░ 3/5 complete (60%)
 ```
 
 *(Illustrative example. See [Quickstart](/guide/quickstart) for the full end-to-end flow, including mid-work changes and session handoff.)*

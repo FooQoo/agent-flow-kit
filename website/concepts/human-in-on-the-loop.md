@@ -42,7 +42,7 @@ Requirements change while work is underway. You can send additions or correction
 
 ## Progress at turn end
 
-When client Hooks are enabled, AFK's Stop Hook reads `.afk/afk.db` in read-only mode at the end of any turn that touched AFK and prints a concise status line (`AFK · <title> [<Status>] · ...`). This is **turn-end reporting**, not a live background dashboard, and it avoids asking the model for extra reasoning or reporting tool calls.
+When client Hooks are enabled, AFK's Stop Hook reads `.afk/afk.db` in read-only mode at the end of any turn that touched AFK and prints a concise progress bar and task summary (`[AFK] <title> [<Status>] · ██████░░░░ ...`). This is **turn-end reporting**, not a live background dashboard, and it avoids asking the model for extra reasoning or reporting tool calls.
 
 ## Autonomy and limits
 

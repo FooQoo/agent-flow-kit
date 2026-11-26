@@ -43,7 +43,7 @@ description: Diagnose and safely recover from installation, MCP startup, hook, r
 
 - **Check:** Confirm client Hooks are enabled and trusted (in Codex, approve the `PostToolUse` and `Stop` hooks when prompted). Note that turn-end banners only fire on turns that called an AFK tool for a specific plan (`open_plan` without `plan_id` does not trigger a banner), and non-interactive modes such as `codex exec --json` omit hook banners in their JSON stream.
 - **Fix:** Verify the plugin hooks are trusted and that the AFK binary has already been cached by an MCP call (un-cached `--hook` calls fail-open silently to stay under the 1-second hook timeout).
-- **Healthy state:** After a turn that calls an AFK tool, a concise `AFK · <title> [<Status>] · ...` line appears.
+- **Healthy state:** After a turn that calls an AFK tool, a concise `[AFK] <title> [<Status>] · ██████░░░░ ...` summary and task list appear.
 - **Still stuck?** Check whether `PLUGIN_DATA` / `CLAUDE_PLUGIN_DATA` is writable.
 
 ## 6. Cannot resume work from a new session

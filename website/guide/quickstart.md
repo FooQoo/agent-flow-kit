@@ -22,19 +22,19 @@ AI:    I drafted a plan:
        4. Add automated tests
        5. Verify acceptance conditions
 AI:    Should search results be sorted by relevance or newest first?
-[AFK]  AFK · Improve search feature [Backlog] · 0/5 complete · 1 question waiting
+[AFK]  Improve search feature [Backlog] · ░░░░░░░░░░ 0/5 complete (0%)
 
 Human: Sort by relevance, and go ahead.
 AI:    Recorded your answer, updated the plan, and finished tasks 1–3.
-[AFK]  AFK · Improve search feature [Doing] · 3/5 complete · Next: Add automated tests
+[AFK]  Improve search feature [Doing] · ██████░░░░ 3/5 complete (60%)
 
 Human: Also improve the empty-results view when 0 items match.
 AI:    Recorded the follow-up request and updated the plan and acceptance criteria.
-[AFK]  AFK · Improve search feature [Doing] · 3/6 complete · Next: Add automated tests
+[AFK]  Improve search feature [Doing] · █████░░░░░ 3/6 complete (50%)
 
 Human: Continue.
 AI:    Completed implementation, tests, and verified every acceptance bullet.
-[AFK]  AFK · Improve search feature [Done] · 6/6 complete · Plan complete
+[AFK]  Improve search feature [Done] · ██████████ 6/6 complete (100%)
 ```
 
 *(Illustrative example. The `[AFK]` lines represent turn-end Stop Hook reports, distinct from the agent's own text. You do not have to prompt the agent on every task; the number of tasks and pauses depends on your request and client.)*

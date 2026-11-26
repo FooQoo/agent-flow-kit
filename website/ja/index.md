@@ -254,7 +254,7 @@ landing:
           percent: 60
           tag: AI の追加思考なし
           detail: .afk/ の保存データから直接集計
-          banner: "AFK · 検索機能の改善 [進行中] · 3/5 完了 · 次: テストの追加"
+          banner: "[AFK] 検索機能の改善 [Doing] · ██████░░░░ 3/5 complete (60%)"
   efficiency:
     eyebrow: 役割の切り分け
     title: 「お願い」ではなく、プログラムでルールを守る。

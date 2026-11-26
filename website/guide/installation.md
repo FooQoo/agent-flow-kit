@@ -53,7 +53,7 @@ To verify that AFK is working in your project:
 2. Ask for a small plan only (for example: `/agent-flow-kit:afk Plan a small test fixture. Do not start yet.`).
 3. Confirm that:
    - The agent calls AFK tools and creates `.afk/afk.db`, `.afk/requests/`, `.afk/plans/`, and `.afk/tasks/` inside the project root.
-   - At the end of the turn, a concise `AFK · ...` progress message appears (when hooks are enabled in Claude Code or interactive Codex).
+   - At the end of the turn, a concise `[AFK] ... · ██████░░░░ ...` progress message appears (when hooks are enabled in Claude Code or interactive Codex).
 
 If anything does not appear as expected, see [Troubleshooting](/troubleshooting).
 
