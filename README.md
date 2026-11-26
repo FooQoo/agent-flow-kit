@@ -9,7 +9,6 @@
 # Agent Flow Kit
 
 [![CI](https://github.com/FooQoo/agent-flow-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/FooQoo/agent-flow-kit/actions/workflows/ci.yml)
-[![Docs](https://github.com/FooQoo/agent-flow-kit/actions/workflows/pages.yml/badge.svg)](https://fooqoo.github.io/agent-flow-kit/)
 [![Release](https://img.shields.io/github/v/release/FooQoo/agent-flow-kit?color=10b981)](https://github.com/FooQoo/agent-flow-kit/releases)
 
 **A lightweight harness for AI agents to carry out work.**

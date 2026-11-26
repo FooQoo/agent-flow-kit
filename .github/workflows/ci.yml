@@ -97,7 +97,7 @@ jobs:
       - name: Assemble and smoke-test the release archives
         run: |
           lipo -create binaries/afk-macos-arm64 binaries/afk-macos-x64 -output binaries/afk-macos
-          lipo -verify_arch arm64 x86_64 binaries/afk-macos
+          lipo binaries/afk-macos -verify_arch arm64 x86_64
           codesign --sign - --force binaries/afk-macos
           scripts/package.sh binaries packages all
           python3 tests/integration/stdio_workflow.py packages/codex/plugins/agent-flow-kit/run
@@ -110,7 +110,7 @@ jobs:
             archive="${binary%.exe}.tar.gz"
             tar -C binaries -czf "dist/$archive" "$binary"
           done
-          (cd dist && shasum -a 256 ./*.tar.gz > SHA256SUMS)
+          (cd dist && shasum -a 256 *.tar.gz > SHA256SUMS)
       - uses: actions/upload-artifact@v4
         with:
           name: afk-release-packages
