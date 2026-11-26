@@ -1,11 +1,11 @@
 # Agent Flow Kit をインストールする
 
-AFK は Claude Code と Codex のプラグインを Git マーケットプレイスで配布します。プラグインには macOS と Linux 用の AFK 実行ファイルが含まれます。`YOUR_GIT_MARKETPLACE_URL` は、配布元の Git リポジトリ URL に置き換えてください。
+AFK は `FooQoo/agent-flow-kit` リポジトリから Claude Code と Codex 向けに直接配布しています。初回 MCP 起動時にプラグインの `run` スクリプトが [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases) から対象 OS（macOS / Linux）のバイナリを自動取得し、`SHA256SUMS` で検証してローカルにキャッシュします。ネットワーク接続が必要なのは各バージョンの初回起動時のみです。
 
 ## Claude Code
 
 ```sh
-claude plugin marketplace add "YOUR_GIT_MARKETPLACE_URL"
+claude plugin marketplace add "https://github.com/FooQoo/agent-flow-kit.git"
 claude plugin install agent-flow-kit@afk
 ```
 
@@ -14,7 +14,7 @@ claude plugin install agent-flow-kit@afk
 ## Codex
 
 ```sh
-codex plugin marketplace add "YOUR_GIT_MARKETPLACE_URL"
+codex plugin marketplace add "https://github.com/FooQoo/agent-flow-kit.git"
 codex plugin add agent-flow-kit@afk
 ```
 
@@ -22,6 +22,10 @@ codex plugin add agent-flow-kit@afk
 
 ## Antigravity・その他の stdio MCP クライアント
 
-同じ Git マーケットプレイスをクローンします。MCP の起動コマンドにクローン先の `plugins/codex/run` の絶対パスを指定し、サーバーの環境に `AFK_NEEDS_WORKSPACE=1` を設定します。`plugins/codex/skills/afk/SKILL.md` をクライアントのスキルに追加し、最初の AFK 呼び出しでプロジェクトのパスを渡します。
+`https://github.com/FooQoo/agent-flow-kit.git` をクローンします。MCP の起動コマンドにクローン先の `plugins/codex/run` の絶対パスを指定し、サーバーの環境に `AFK_NEEDS_WORKSPACE=1` を設定します。`plugins/codex/skills/afk/SKILL.md` をクライアントのスキルに追加し、最初の AFK 呼び出しでプロジェクトのパスを渡します。
+
+## オフライン環境での利用
+
+初回起動時に GitHub Releases へ接続できない環境では、[GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases) からバイナリ同梱アーカイブ（`afk-claude-code.tar.gz` または `afk-codex.tar.gz`）と `SHA256SUMS` を取得してください。`run` と同じ階層に `bin/afk-*` が配置されている場合、ネットワーク通信なしで同梱バイナリをそのまま実行します。
 
 [クイックスタートに進む](./quickstart.md)

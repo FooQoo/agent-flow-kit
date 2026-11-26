@@ -1,11 +1,11 @@
 # Install Agent Flow Kit
 
-AFK is available as a Git marketplace for Claude Code and Codex. The plugin includes the AFK binary for macOS and Linux. Use the Git repository URL provided with the distribution in place of `YOUR_GIT_MARKETPLACE_URL`.
+AFK is distributed directly from the `FooQoo/agent-flow-kit` Git repository for Claude Code and Codex. On first MCP launch, the plugin launcher (`run`) downloads the matching macOS or Linux binary from [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases), verifies it against `SHA256SUMS`, and caches it locally. Network access is only needed on the first run for a given version.
 
 ## Claude Code
 
 ```sh
-claude plugin marketplace add "YOUR_GIT_MARKETPLACE_URL"
+claude plugin marketplace add "https://github.com/FooQoo/agent-flow-kit.git"
 claude plugin install agent-flow-kit@afk
 ```
 
@@ -14,7 +14,7 @@ Start a new Claude Code session in your project and run `/agent-flow-kit:afk` wi
 ## Codex
 
 ```sh
-codex plugin marketplace add "YOUR_GIT_MARKETPLACE_URL"
+codex plugin marketplace add "https://github.com/FooQoo/agent-flow-kit.git"
 codex plugin add agent-flow-kit@afk
 ```
 
@@ -22,6 +22,10 @@ Start a new conversation in your project and select `$agent-flow-kit:afk`. Revie
 
 ## Antigravity and other stdio MCP clients
 
-Clone the same Git marketplace. Set the MCP command to the absolute path to `plugins/codex/run` in that checkout and set `AFK_NEEDS_WORKSPACE=1` in the server environment. Add `plugins/codex/skills/afk/SKILL.md` to your client's skills and pass the project directory on the first AFK call.
+Clone `https://github.com/FooQoo/agent-flow-kit.git`. Set the MCP command to the absolute path to `plugins/codex/run` in that checkout and set `AFK_NEEDS_WORKSPACE=1` in the server environment. Add `plugins/codex/skills/afk/SKILL.md` to your client's skills and pass the project directory on the first AFK call.
+
+## Offline / air-gapped installation
+
+If your environment cannot reach GitHub Releases on first launch, download the pre-bundled plugin archives (`afk-claude-code.tar.gz` or `afk-codex.tar.gz`) and `SHA256SUMS` from [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases). When `bin/afk-*` is already present beside `run`, AFK uses the bundled binary directly without network access.
 
 [Try the quickstart](./quickstart.md)

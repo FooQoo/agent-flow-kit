@@ -44,5 +44,6 @@ export default defineConfig({
   },
   themeConfig: {
     logo: { light: '/logo.png', dark: '/logo-dark.png', alt: 'Agent Flow Kit' },
+    socialLinks: [{ icon: 'github', link: 'https://github.com/FooQoo/agent-flow-kit' }],
   },
 })
