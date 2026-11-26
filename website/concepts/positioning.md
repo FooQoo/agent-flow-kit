@@ -42,45 +42,7 @@ Because tools like Backlog.md also provide planning, acceptance criteria, and AI
 
 ## C. How they fit together
 
-<figure class="doc-diagram">
-  <svg viewBox="0 0 760 270" role="img" aria-label="Positioning map showing Human and AI Agent connected to AFK, optional methodologies, and optional shared boards">
-    <defs>
-      <marker id="pos-en-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--vp-c-brand-1)" />
-      </marker>
-      <marker id="pos-en-arrow-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--vp-c-text-3)" />
-      </marker>
-    </defs>
-
-    <rect x="20" y="106" width="146" height="60" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
-    <text x="93" y="131" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="13.5" font-weight="700">Human</text>
-    <text x="93" y="151" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="11.5">Goals &amp; decisions</text>
-
-    <line x1="166" y1="136" x2="210" y2="136" stroke="var(--vp-c-text-3)" stroke-width="1.5" marker-start="url(#pos-en-arrow-muted)" marker-end="url(#pos-en-arrow-muted)" />
-
-    <rect x="216" y="98" width="184" height="76" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-brand-1)" stroke-width="1.5" />
-    <text x="308" y="128" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="13.5" font-weight="700">Existing AI Agent</text>
-    <text x="308" y="150" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="11.5">Claude Code / Codex</text>
-
-    <path d="M 400 118 L 466 54" stroke="var(--vp-c-brand-1)" stroke-width="2" fill="none" marker-end="url(#pos-en-arrow)" />
-    <path d="M 400 136 L 466 136" stroke="var(--vp-c-text-3)" stroke-width="1.5" stroke-dasharray="5 4" fill="none" marker-end="url(#pos-en-arrow-muted)" />
-    <path d="M 400 154 L 466 218" stroke="var(--vp-c-text-3)" stroke-width="1.5" stroke-dasharray="5 4" fill="none" marker-end="url(#pos-en-arrow-muted)" />
-
-    <rect x="472" y="22" width="268" height="62" rx="12" fill="var(--vp-c-brand-soft)" stroke="var(--vp-c-brand-1)" stroke-width="1.8" />
-    <text x="606" y="47" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="14" font-weight="700">Agent Flow Kit (AFK)</text>
-    <text x="606" y="68" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="12">Work execution harness</text>
-
-    <rect x="472" y="105" width="268" height="62" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
-    <text x="606" y="130" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="13.5" font-weight="700">AI-DLC / SDD / Spec Kit</text>
-    <text x="606" y="151" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="11.5">Optional development methodology</text>
-
-    <rect x="472" y="188" width="268" height="62" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
-    <text x="606" y="213" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="13.5" font-weight="700">Vercel Board / Backlog.md</text>
-    <text x="606" y="234" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="11.5">Optional shared board / backlog</text>
-  </svg>
-  <figcaption>Conceptual map of primary roles—not technical dependencies, official integrations, or mutually exclusive categories.</figcaption>
-</figure>
+<ConceptDiagram name="positioning" lang="en" />
 
 ## Summary
 

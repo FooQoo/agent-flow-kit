@@ -22,55 +22,7 @@ AFK models every piece of work with four Markdown-backed entities stored under `
 
 ## Work lifecycle
 
-<figure class="doc-diagram">
-  <svg viewBox="0 0 760 270" role="img" aria-label="Lifecycle diagram from Request to Plan, Task execution, and Verification, with optional Question and Follow-up Request loops">
-    <defs>
-      <marker id="wm-en-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--vp-c-brand-1)" />
-      </marker>
-      <marker id="wm-en-arrow-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--vp-c-text-3)" />
-      </marker>
-    </defs>
-
-    <rect x="24" y="34" width="132" height="58" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
-    <text x="90" y="59" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="14" font-weight="700">1. Request</text>
-    <text x="90" y="78" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="11.5">Record goal</text>
-
-    <line x1="156" y1="63" x2="202" y2="63" stroke="var(--vp-c-brand-1)" stroke-width="1.8" marker-end="url(#wm-en-arrow)" />
-
-    <rect x="208" y="34" width="144" height="58" rx="12" fill="var(--vp-c-brand-soft)" stroke="var(--vp-c-brand-1)" stroke-width="1.5" />
-    <text x="280" y="59" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="14" font-weight="700">2. Plan</text>
-    <text x="280" y="78" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="11.5">Order &amp; acceptance</text>
-
-    <line x1="352" y1="63" x2="398" y2="63" stroke="var(--vp-c-brand-1)" stroke-width="1.8" marker-end="url(#wm-en-arrow)" />
-
-    <rect x="404" y="34" width="144" height="58" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
-    <text x="476" y="59" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="14" font-weight="700">3. Execute</text>
-    <text x="476" y="78" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="11.5">Run &amp; log evidence</text>
-
-    <line x1="548" y1="63" x2="594" y2="63" stroke="var(--vp-c-brand-1)" stroke-width="1.8" marker-end="url(#wm-en-arrow)" />
-
-    <rect x="600" y="34" width="136" height="58" rx="12" fill="var(--vp-c-brand-soft)" stroke="var(--vp-c-brand-1)" stroke-width="1.5" />
-    <text x="668" y="59" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="14" font-weight="700">4. Done</text>
-    <text x="668" y="78" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="11.5">All checks verified</text>
-
-    <rect x="330" y="168" width="210" height="58" rx="12" fill="var(--vp-c-bg)" stroke="var(--lp-pending-border, #d99b26)" stroke-width="1.5" />
-    <text x="435" y="193" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="13.5" font-weight="700">Question (when needed)</text>
-    <text x="435" y="212" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="11.5">Pause &amp; seal human answer</text>
-
-    <path d="M 460 92 L 460 162" stroke="var(--vp-c-text-3)" stroke-width="1.5" stroke-dasharray="4 4" fill="none" marker-end="url(#wm-en-arrow-muted)" />
-    <path d="M 380 168 L 315 98" stroke="var(--vp-c-brand-1)" stroke-width="1.5" fill="none" marker-end="url(#wm-en-arrow)" />
-    <text x="326" y="144" fill="var(--vp-c-brand-1)" font-size="11">Reflect answer</text>
-
-    <rect x="44" y="168" width="196" height="58" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
-    <text x="142" y="193" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="13.5" font-weight="700">Follow-up Request</text>
-    <text x="142" y="212" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="11.5">Keep Done tasks &amp; replan</text>
-
-    <path d="M 190 168 L 250 98" stroke="var(--vp-c-brand-1)" stroke-width="1.5" stroke-dasharray="5 4" fill="none" marker-end="url(#wm-en-arrow)" />
-  </svg>
-  <figcaption>Core lifecycle from Request to verified Done, with optional Question and mid-work replanning loops.</figcaption>
-</figure>
+<ConceptDiagram name="work-model" lang="en" />
 
 1. **Request**: The agent records your instruction in `.afk/requests/`.
 2. **Plan**: The agent prepares a draft revision (`update_plan / prepare`), writes the plan and tasks in Markdown, and commits the draft (`update_plan / commit`).

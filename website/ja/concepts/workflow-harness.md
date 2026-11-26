@@ -24,53 +24,7 @@ description: Agent Flow Kit がなぜ既存エージェントを置き換えず�
 
 ## 責務の分担イメージ
 
-<figure class="doc-diagram">
-  <svg viewBox="0 0 760 310" role="img" aria-label="人間、AI エージェント、標準ツール、Agent Flow Kit、およびプロジェクト内ファイルの関係図">
-    <defs>
-      <marker id="wh-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--vp-c-brand-1)" />
-      </marker>
-      <marker id="wh-arrow-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--vp-c-text-3)" />
-      </marker>
-    </defs>
-
-    <!-- Human -->
-    <rect x="230" y="16" width="300" height="58" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
-    <text x="380" y="40" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="14" font-weight="700">あなた（人間）</text>
-    <text x="380" y="60" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="12">目的を伝える · 大事な判断 · 方向修正</text>
-
-    <!-- Human <-> Agent -->
-    <line x1="380" y1="74" x2="380" y2="112" stroke="var(--vp-c-text-3)" stroke-width="1.5" marker-start="url(#wh-arrow-muted)" marker-end="url(#wh-arrow-muted)" />
-    <text x="392" y="97" fill="var(--vp-c-text-2)" font-size="11.5">普段通りの会話</text>
-
-    <!-- AI Agent -->
-    <rect x="210" y="116" width="340" height="60" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-brand-1)" stroke-width="1.5" />
-    <text x="380" y="141" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="14" font-weight="700">いつもの AI エージェント（Claude Code / Codex）</text>
-    <text x="380" y="161" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="12">計画を立てる · コードを書く · 動作確認する</text>
-
-    <!-- Agent -> Native tools -->
-    <path d="M 290 176 L 190 218" stroke="var(--vp-c-text-3)" stroke-width="1.5" fill="none" marker-end="url(#wh-arrow-muted)" />
-    <!-- Agent -> AFK -->
-    <path d="M 470 176 L 560 218" stroke="var(--vp-c-brand-1)" stroke-width="1.8" fill="none" marker-end="url(#wh-arrow)" />
-
-    <!-- Native tools -->
-    <rect x="30" y="222" width="310" height="66" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
-    <text x="185" y="247" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="13.5" font-weight="700">標準ツール（ファイル読み書き・コマンド）</text>
-    <text x="185" y="269" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="12">ソースコードや .afk/*.md を直接編集</text>
-
-    <!-- AFK -->
-    <rect x="410" y="222" width="320" height="66" rx="12" fill="var(--vp-c-brand-soft)" stroke="var(--vp-c-brand-1)" stroke-width="1.5" />
-    <text x="570" y="247" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="13.5" font-weight="700">Agent Flow Kit（プラグイン）</text>
-    <text x="570" y="269" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="12">進捗・順番・完了チェックを .afk/afk.db で管理</text>
-
-    <!-- AFK -> Human (progress report) -->
-    <path d="M 680 222 L 680 45 L 538 45" stroke="var(--vp-c-brand-1)" stroke-width="1.5" stroke-dasharray="5 4" fill="none" marker-end="url(#wh-arrow)" />
-    <text x="692" y="138" fill="var(--vp-c-brand-1)" font-size="11.5" font-weight="600">会話末尾の</text>
-    <text x="692" y="154" fill="var(--vp-c-brand-1)" font-size="11.5" font-weight="600">進捗表示</text>
-  </svg>
-  <figcaption>責務の分離イメージ（AFK は人間と AI の全会話を中継するものではありません）</figcaption>
-</figure>
+<ConceptDiagram name="workflow-harness" lang="ja" />
 
 ## なぜガイド（プロンプト）だけでは足りないのか
 

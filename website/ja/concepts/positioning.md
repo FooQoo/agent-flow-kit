@@ -42,51 +42,7 @@ Backlog.md にも計画や完了条件・AI 向けルールがあるため、「
 
 ## C. 全体の位置づけ
 
-<figure class="doc-diagram">
-  <svg viewBox="0 0 760 270" role="img" aria-label="人間と既存 AI エージェントを中心に、AFK・開発方法論・タスク管理ツールがそれぞれ担う役割の位置づけ図">
-    <defs>
-      <marker id="pos-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--vp-c-brand-1)" />
-      </marker>
-      <marker id="pos-arrow-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--vp-c-text-3)" />
-      </marker>
-    </defs>
-
-    <!-- Human -->
-    <rect x="20" y="106" width="146" height="60" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
-    <text x="93" y="131" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="13.5" font-weight="700">あなた（人間）</text>
-    <text x="93" y="151" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="11.5">目的と判断</text>
-
-    <line x1="166" y1="136" x2="210" y2="136" stroke="var(--vp-c-text-3)" stroke-width="1.5" marker-start="url(#pos-arrow-muted)" marker-end="url(#pos-arrow-muted)" />
-
-    <!-- Existing Agent -->
-    <rect x="216" y="98" width="184" height="76" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-brand-1)" stroke-width="1.5" />
-    <text x="308" y="128" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="13.5" font-weight="700">いつもの AI エージェント</text>
-    <text x="308" y="150" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="11.5">Claude Code / Codex 等</text>
-
-    <!-- Arrows to right column -->
-    <path d="M 400 118 L 466 54" stroke="var(--vp-c-brand-1)" stroke-width="2" fill="none" marker-end="url(#pos-arrow)" />
-    <path d="M 400 136 L 466 136" stroke="var(--vp-c-text-3)" stroke-width="1.5" stroke-dasharray="5 4" fill="none" marker-end="url(#pos-arrow-muted)" />
-    <path d="M 400 154 L 466 218" stroke="var(--vp-c-text-3)" stroke-width="1.5" stroke-dasharray="5 4" fill="none" marker-end="url(#pos-arrow-muted)" />
-
-    <!-- Right 1: AFK -->
-    <rect x="472" y="22" width="268" height="62" rx="12" fill="var(--vp-c-brand-soft)" stroke="var(--vp-c-brand-1)" stroke-width="1.8" />
-    <text x="606" y="47" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="14" font-weight="700">Agent Flow Kit（AFK）</text>
-    <text x="606" y="68" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="12">仕事の進行・完了確認・引き継ぎを支える</text>
-
-    <!-- Right 2: Methodologies -->
-    <rect x="472" y="105" width="268" height="62" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
-    <text x="606" y="130" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="13.5" font-weight="700">AI-DLC / SDD / Spec Kit</text>
-    <text x="606" y="151" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="11.5">必要に応じて選ぶ開発プロセス・仕様手法</text>
-
-    <!-- Right 3: Boards -->
-    <rect x="472" y="188" width="268" height="62" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
-    <text x="606" y="213" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="13.5" font-weight="700">Vercel Board / Backlog.md</text>
-    <text x="606" y="234" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="11.5">必要に応じて使う共有ボード・タスク管理</text>
-  </svg>
-  <figcaption>各ツール・手法の主な役割の位置づけ（技術的な依存や公式連携を示すものではありません）</figcaption>
-</figure>
+<ConceptDiagram name="positioning" lang="ja" />
 
 ## まとめ
 
