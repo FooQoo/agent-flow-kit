@@ -9,6 +9,27 @@ permissions:
   contents: read
 
 jobs:
+  plugins-and-docs:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check plugin sync and versions
+        run: scripts/sync-plugins.sh --check
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: website/pnpm-lock.yaml
+      - name: Install website dependencies
+        run: pnpm --dir website install --frozen-lockfile
+      - name: Build VitePress documentation
+        env:
+          DOCS_BASE: /agent-flow-kit/
+        run: pnpm --dir website build
+
   build:
     strategy:
       fail-fast: false
@@ -27,6 +48,8 @@ jobs:
       - run: cargo +1.96.0 test --locked --workspace
       - run: cargo +1.96.0 build --locked --release
       - run: python3 tests/integration/stdio_workflow.py target/release/afk
+      - run: python3 tests/integration/run_bootstrap.py plugins/codex/run target/release/afk
+      - run: python3 tests/integration/run_bootstrap.py plugins/claude-code/run target/release/afk
       - name: Stage binary and inspect dependencies
         env:
           BINARY: ${{ matrix.binary }}
