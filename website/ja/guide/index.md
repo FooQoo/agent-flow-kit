@@ -1,6 +1,6 @@
 # Agent Flow Kit をインストールする
 
-AFK は `FooQoo/agent-flow-kit` リポジトリから Claude Code と Codex 向けに直接配布しています。初回 MCP 起動時にプラグインの `run` スクリプトが [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases) から対象 OS（macOS / Linux）のバイナリを自動取得し、`SHA256SUMS` で検証してローカルにキャッシュします。ネットワーク接続が必要なのは各バージョンの初回起動時のみです。
+AFK は `FooQoo/agent-flow-kit` リポジトリから Claude Code と Codex 向けに直接配布しています。初回 MCP 起動時にプラグインの `run` スクリプトが [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases) から対象 OS（macOS / Linux / Windows x64）のバイナリを自動取得し、`SHA256SUMS` で検証してローカルにキャッシュします。ネットワーク接続が必要なのは各バージョンの初回起動時のみです。
 
 ## Claude Code
 

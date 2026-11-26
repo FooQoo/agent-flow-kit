@@ -14,6 +14,7 @@ AFK は「プラグインを追加 → いつものエージェントを起動 �
 - **対応 OS / CPU**:
   - macOS（Apple Silicon / Intel 両対応の `afk-macos`）
   - Linux（`x86_64`: `afk-linux-x64`、`arm64`: `afk-linux-arm64`）
+  - Windows（`x86_64`: `afk-windows-x64.exe` — Git Bash 等の POSIX `sh` 環境、または [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases) のバイナリを直接利用）
 - **初回起動時のインターネット接続**: 各バージョンの初回起動時だけ、プラグイン内の起動スクリプト（`run`）が [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases) から対象 OS 用の実行ファイルを取得し、改ざんチェック（SHA-256 検証）をして手元にキャッシュします。2 回目以降はオフラインで起動します。
 - **使用する標準コマンド**: `curl` または `wget`、`tar`、`shasum` または `sha256sum`（macOS / Linux に標準搭載）。
 - **対応クライアント**: Claude Code、Codex、または stdio MCP に対応したクライアント。

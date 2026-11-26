@@ -25,7 +25,7 @@ codex plugin marketplace add "https://github.com/FooQoo/agent-flow-kit.git"
 codex plugin add agent-flow-kit@afk
 ```
 
-On first launch, the plugin downloads the matching macOS or Linux binary from GitHub Releases, verifies `SHA256SUMS`, and caches it locally.
+On first launch, the plugin downloads the matching macOS, Linux, or Windows (`x86_64`) binary from GitHub Releases, verifies `SHA256SUMS`, and caches it locally.
 
 ## Work with AFK
 

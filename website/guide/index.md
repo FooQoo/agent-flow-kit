@@ -1,6 +1,6 @@
 # Install Agent Flow Kit
 
-AFK is distributed directly from the `FooQoo/agent-flow-kit` Git repository for Claude Code and Codex. On first MCP launch, the plugin launcher (`run`) downloads the matching macOS or Linux binary from [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases), verifies it against `SHA256SUMS`, and caches it locally. Network access is only needed on the first run for a given version.
+AFK is distributed directly from the `FooQoo/agent-flow-kit` Git repository for Claude Code and Codex. On first MCP launch, the plugin launcher (`run`) downloads the matching macOS, Linux, or Windows (`x86_64`) binary from [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases), verifies it against `SHA256SUMS`, and caches it locally. Network access is only needed on the first run for a given version.
 
 ## Claude Code
 

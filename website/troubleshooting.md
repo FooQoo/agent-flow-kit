@@ -9,7 +9,7 @@ description: Diagnose and safely recover from installation, MCP startup, hook, r
 
 ## 1. Cannot install the plugin
 
-- **Check:** Verify your OS/architecture (`macOS arm64/x86_64`, `Linux x86_64/arm64`), host client version, and network access to `https://github.com/FooQoo/agent-flow-kit.git`.
+- **Check:** Verify your OS/architecture (`macOS arm64/x86_64`, `Linux x86_64/arm64`, `Windows x86_64` with Git Bash / POSIX `sh`), host client version, and network access to `https://github.com/FooQoo/agent-flow-kit.git`.
 - **Fix:** Re-run the exact marketplace and install commands from [Installation](/guide/installation). If your network blocks GitHub, use the offline plugin archives from [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases).
 - **Healthy state:** The plugin appears in your client's installed plugin list and exposes `/agent-flow-kit:afk` (Claude Code) or `$agent-flow-kit:afk` (Codex).
 - **Still stuck?** Open an issue on [GitHub Issues](https://github.com/FooQoo/agent-flow-kit/issues) with OS, client version, and command output.

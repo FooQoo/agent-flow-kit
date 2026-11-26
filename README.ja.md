@@ -25,7 +25,7 @@ codex plugin marketplace add "https://github.com/FooQoo/agent-flow-kit.git"
 codex plugin add agent-flow-kit@afk
 ```
 
-初回起動時に GitHub Releases から対象 OS 用のバイナリを自動取得し、`SHA256SUMS` で検証してローカルにキャッシュします。
+初回起動時に GitHub Releases から対象 OS（macOS / Linux / Windows x64）用のバイナリを自動取得し、`SHA256SUMS` で検証してローカルにキャッシュします。
 
 ## AFK で作業を任せる
 

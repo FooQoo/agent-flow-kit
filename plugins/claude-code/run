@@ -10,6 +10,7 @@ case "$(uname -s):$(uname -m)" in
     Darwin:arm64|Darwin:x86_64) binary=afk-macos ;;
     Linux:x86_64) binary=afk-linux-x64 ;;
     Linux:aarch64|Linux:arm64) binary=afk-linux-arm64 ;;
+    MINGW*:x86_64|MINGW*:amd64|MINGW*:AMD64|MSYS*:x86_64|MSYS*:amd64|MSYS*:AMD64|CYGWIN*:x86_64|CYGWIN*:amd64|CYGWIN*:AMD64) binary=afk-windows-x64.exe ;;
     *) printf '%s\n' 'AFK: unsupported OS or architecture' >&2; exit 1 ;;
 esac
 
@@ -26,6 +27,8 @@ elif [ -n "${PLUGIN_DATA:-}" ]; then
     cache_root="$PLUGIN_DATA/bin"
 elif [ -n "${CLAUDE_PLUGIN_DATA:-}" ]; then
     cache_root="$CLAUDE_PLUGIN_DATA/bin"
+elif [ -n "${LOCALAPPDATA:-}" ]; then
+    cache_root="$LOCALAPPDATA/agent-flow-kit/bin"
 else
     cache_root="${XDG_CACHE_HOME:-$HOME/.cache}/agent-flow-kit/bin"
 fi
@@ -46,7 +49,7 @@ done
 
 # 4. Download release archive + SHA256SUMS, verify checksum, and atomically install to cache.
 base_url=${AFK_RELEASE_BASE_URL:-"https://github.com/$AFK_DEFAULT_RELEASE_REPO/releases/download/v$version"}
-archive="$binary.tar.gz"
+archive="${binary%.exe}.tar.gz"
 target_dir="$cache_root/v$version"
 mkdir -p "$target_dir"
 

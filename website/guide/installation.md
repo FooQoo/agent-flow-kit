@@ -14,6 +14,7 @@ AFK is designed for zero-runtime setup: add the plugin to your existing agent, o
 - **Operating System / Architecture**:
   - macOS (`arm64` / `x86_64` — universal binary `afk-macos`)
   - Linux (`x86_64` `afk-linux-x64`, `arm64`/`aarch64` `afk-linux-arm64`)
+  - Windows (`x86_64` `afk-windows-x64.exe` — via Git Bash / POSIX `sh`, or direct binary from [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases))
 - **First-run network access**: On the first MCP launch for a given version, the plugin launcher (`run`) downloads the matching release archive and `SHA256SUMS` from [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases), verifies the SHA-256 digest, and caches the binary locally. Subsequent launches run offline from cache.
 - **Tools required by the launcher**: `curl` or `wget`, `tar`, and `shasum` or `sha256sum` (standard on macOS and Linux).
 - **Supported hosts**: Claude Code, Codex, or any stdio MCP client.

@@ -28,7 +28,7 @@ for client in claude-code codex; do
     cp -R "$source_root/plugins/$client/." "$stage/"
     cp -R "$source_root/plugins/shared/." "$stage/"
     cp "$source_root/THIRD_PARTY_NOTICES.txt" "$stage/"
-    for binary in afk-macos afk-linux-x64 afk-linux-arm64; do
+    for binary in afk-macos afk-linux-x64 afk-linux-arm64 afk-windows-x64.exe; do
         if [ -f "$binaries/$binary" ]; then
             install -m 755 "$binaries/$binary" "$stage/bin/$binary"
         elif [ "$mode" = all ]; then
