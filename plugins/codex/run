@@ -1,14 +1,116 @@
 #!/bin/sh
 set -eu
+
+AFK_DEFAULT_VERSION="0.1.0"
+AFK_DEFAULT_RELEASE_REPO="FooQoo/agent-flow-kit"
+
 base=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+
 case "$(uname -s):$(uname -m)" in
     Darwin:arm64|Darwin:x86_64) binary=afk-macos ;;
     Linux:x86_64) binary=afk-linux-x64 ;;
     Linux:aarch64|Linux:arm64) binary=afk-linux-arm64 ;;
     *) printf '%s\n' 'AFK: unsupported OS or architecture' >&2; exit 1 ;;
 esac
-if [ ! -x "$base/bin/$binary" ]; then
-    printf 'AFK: missing bundled binary %s\n' "$binary" >&2
+
+# 1. Prefer a bundled binary (offline archives / local development).
+if [ -x "$base/bin/$binary" ]; then
+    exec "$base/bin/$binary" "$@"
+fi
+
+version=${AFK_VERSION:-$AFK_DEFAULT_VERSION}
+
+if [ -n "${AFK_CACHE_DIR:-}" ]; then
+    cache_root=$AFK_CACHE_DIR
+elif [ -n "${PLUGIN_DATA:-}" ]; then
+    cache_root="$PLUGIN_DATA/bin"
+elif [ -n "${CLAUDE_PLUGIN_DATA:-}" ]; then
+    cache_root="$CLAUDE_PLUGIN_DATA/bin"
+else
+    cache_root="${XDG_CACHE_HOME:-$HOME/.cache}/agent-flow-kit/bin"
+fi
+
+cached="$cache_root/v$version/$binary"
+
+# 2. Reuse cached binary if already verified and present.
+if [ -x "$cached" ]; then
+    exec "$cached" "$@"
+fi
+
+# 3. Never block lifecycle hooks on network downloads (fail-open).
+for arg in "$@"; do
+    if [ "$arg" = "--hook" ]; then
+        exit 0
+    fi
+done
+
+# 4. Download release archive + SHA256SUMS, verify checksum, and atomically install to cache.
+base_url=${AFK_RELEASE_BASE_URL:-"https://github.com/$AFK_DEFAULT_RELEASE_REPO/releases/download/v$version"}
+archive="$binary.tar.gz"
+target_dir="$cache_root/v$version"
+mkdir -p "$target_dir"
+
+tmpdir=$(mktemp -d "$target_dir/.afk-dl.XXXXXX")
+cleanup() {
+    rm -rf "$tmpdir"
+}
+trap cleanup EXIT INT TERM
+
+fetch() {
+    url=$1
+    dest=$2
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL --retry 2 --connect-timeout 10 -o "$dest" "$url"
+    elif command -v wget >/dev/null 2>&1; then
+        wget -qO "$dest" "$url"
+    else
+        printf '%s\n' 'AFK: curl or wget is required to download the release binary' >&2
+        return 1
+    fi
+}
+
+sha256_file() {
+    file=$1
+    if command -v shasum >/dev/null 2>&1; then
+        shasum -a 256 "$file" | awk '{print $1}'
+    elif command -v sha256sum >/dev/null 2>&1; then
+        sha256sum "$file" | awk '{print $1}'
+    else
+        printf '%s\n' 'AFK: shasum or sha256sum is required to verify the release binary' >&2
+        return 1
+    fi
+}
+
+fetch "$base_url/$archive" "$tmpdir/$archive"
+fetch "$base_url/SHA256SUMS" "$tmpdir/SHA256SUMS"
+
+expected=$(awk -v target="$archive" '
+    {
+        name = $2
+        sub(/^\.\//, "", name)
+        sub(/^\*/, "", name)
+        if (name == target) {
+            print $1
+            exit
+        }
+    }
+' "$tmpdir/SHA256SUMS")
+
+if [ -z "$expected" ]; then
+    printf 'AFK: missing SHA256 entry for %s in SHA256SUMS\n' "$archive" >&2
     exit 1
 fi
-exec "$base/bin/$binary" "$@"
+
+actual=$(sha256_file "$tmpdir/$archive")
+if [ "$actual" != "$expected" ]; then
+    printf 'AFK: SHA256 mismatch for %s (expected %s, got %s)\n' "$archive" "$expected" "$actual" >&2
+    exit 1
+fi
+
+tar -xzf "$tmpdir/$archive" -C "$tmpdir" "$binary"
+chmod 755 "$tmpdir/$binary"
+mv -f "$tmpdir/$binary" "$cached"
+rm -rf "$tmpdir"
+trap - EXIT INT TERM
+
+exec "$cached" "$@"
