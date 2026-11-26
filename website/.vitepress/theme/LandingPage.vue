@@ -403,32 +403,87 @@ async function copyText(key: string, text: string) {
           <p class="lp-lead lp-band__lead">{{ c.architecture.lead }}</p>
         </header>
 
-        <div class="lp-arch" :aria-label="c.architecture.diagram.ariaLabel">
-          <div class="lp-arch__col">
-            <p class="lp-arch__col-label">{{ c.architecture.diagram.clientsLabel }}</p>
-            <div class="lp-arch__box" v-for="client in c.architecture.diagram.clients" :key="client">
-              {{ client }}
-            </div>
-          </div>
-          <div class="lp-arch__arrow" aria-hidden="true">→</div>
-          <div class="lp-arch__col lp-arch__col--core">
-            <p class="lp-arch__col-label">{{ c.architecture.diagram.kitLabel }}</p>
-            <div class="lp-arch__kit">
-              <div v-for="part in c.architecture.diagram.kit" :key="part.name" class="lp-arch__kit-item">
-                <strong>{{ part.name }}</strong>
-                <span>{{ part.role }}</span>
-              </div>
-            </div>
-          </div>
-          <div class="lp-arch__arrow" aria-hidden="true">→</div>
-          <div class="lp-arch__col">
-            <p class="lp-arch__col-label">{{ c.architecture.diagram.storageLabel }}</p>
-            <div v-for="store in c.architecture.diagram.storage" :key="store.name" class="lp-arch__box lp-arch__box--store">
-              <strong>{{ store.name }}</strong>
-              <span>{{ store.role }}</span>
-            </div>
-          </div>
-        </div>
+        <figure class="lp-arch-svg-wrap">
+          <svg
+            class="lp-arch-svg"
+            viewBox="0 0 880 280"
+            role="img"
+            :aria-label="c.architecture.diagram.ariaLabel"
+          >
+            <defs>
+              <marker id="lp-arrow-mint" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#a4e0bd" />
+              </marker>
+              <marker id="lp-arrow-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#8fa0b2" />
+              </marker>
+            </defs>
+
+            <!-- Column 1: AI Agents -->
+            <text x="115" y="28" text-anchor="middle" fill="#9fb0c2" font-size="12" font-weight="700">
+              {{ c.architecture.diagram.clientsLabel }}
+            </text>
+            <rect x="24" y="46" width="182" height="58" rx="12" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
+            <text x="115" y="80" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="700">
+              {{ c.architecture.diagram.clients[0] }}
+            </text>
+            <rect x="24" y="120" width="182" height="58" rx="12" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
+            <text x="115" y="154" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="700">
+              {{ c.architecture.diagram.clients[1] }}
+            </text>
+
+            <!-- Arrows: Clients -> AFK -->
+            <path d="M 206 75 L 274 96" stroke="#a4e0bd" stroke-width="2" fill="none" marker-end="url(#lp-arrow-mint)" />
+            <path d="M 206 149 L 274 128" stroke="#a4e0bd" stroke-width="2" fill="none" marker-end="url(#lp-arrow-mint)" />
+
+            <!-- Column 2: Agent Flow Kit -->
+            <text x="435" y="28" text-anchor="middle" fill="#a4e0bd" font-size="12" font-weight="700">
+              {{ c.architecture.diagram.kitLabel }}
+            </text>
+            <rect x="282" y="42" width="306" height="146" rx="16" fill="rgba(164,224,189,0.09)" stroke="rgba(164,224,189,0.55)" stroke-width="1.5" />
+
+            <g v-for="(part, idx) in c.architecture.diagram.kit" :key="part.name">
+              <rect :x="298" :y="56 + idx * 42" width="274" height="34" rx="8" fill="rgba(20,25,30,0.72)" stroke="rgba(164,224,189,0.22)" />
+              <text :x="312" :y="78 + idx * 42" fill="#a4e0bd" font-size="13" font-weight="700" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+                {{ part.name }}
+              </text>
+              <text :x="558" :y="78 + idx * 42" text-anchor="end" fill="#dce7f0" font-size="12">
+                {{ part.role }}
+              </text>
+            </g>
+
+            <!-- Arrows: AFK -> Storage -->
+            <path d="M 588 92 L 656 76" stroke="#a4e0bd" stroke-width="2" fill="none" marker-end="url(#lp-arrow-mint)" />
+            <path d="M 588 134 L 656 150" stroke="#a4e0bd" stroke-width="2" fill="none" marker-end="url(#lp-arrow-mint)" />
+
+            <!-- Column 3: Storage (.afk/) -->
+            <text x="760" y="28" text-anchor="middle" fill="#9fb0c2" font-size="12" font-weight="700">
+              {{ c.architecture.diagram.storageLabel }}
+            </text>
+            <rect x="664" y="46" width="192" height="58" rx="12" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
+            <text x="760" y="71" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700">
+              {{ c.architecture.diagram.storage[0].name }}
+            </text>
+            <text x="760" y="91" text-anchor="middle" fill="#b4bdca" font-size="11.5">
+              {{ c.architecture.diagram.storage[0].role }}
+            </text>
+
+            <rect x="664" y="120" width="192" height="58" rx="12" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
+            <text x="760" y="145" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700">
+              {{ c.architecture.diagram.storage[1].name }}
+            </text>
+            <text x="760" y="165" text-anchor="middle" fill="#b4bdca" font-size="11.5">
+              {{ c.architecture.diagram.storage[1].role }}
+            </text>
+
+            <!-- Dashed direct path: Agents -> Markdown -->
+            <path d="M 115 178 L 115 236 L 760 236 L 760 184" stroke="#8fa0b2" stroke-width="1.5" stroke-dasharray="5 5" fill="none" marker-end="url(#lp-arrow-muted)" />
+            <rect x="300" y="222" width="270" height="26" rx="13" fill="#14191e" stroke="rgba(143,160,178,0.4)" />
+            <text x="435" y="239" text-anchor="middle" fill="#b4bdca" font-size="11.5">
+              {{ c.architecture.diagram.directLabel }}
+            </text>
+          </svg>
+        </figure>
 
         <ul class="lp-trust">
           <li v-for="item in c.architecture.items as TrustItem[]" :key="item.title">
@@ -1459,6 +1514,22 @@ async function copyText(key: string, text: string) {
 }
 .lp-band__lead {
   color: var(--lp-band-text-2);
+}
+.lp-arch-svg-wrap {
+  margin-bottom: 48px;
+  padding: 20px;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.lp-arch-svg {
+  display: block;
+  width: 100%;
+  min-width: 640px;
+  max-width: 880px;
+  height: auto;
+  margin: 0 auto;
 }
 .lp-arch {
   display: grid;

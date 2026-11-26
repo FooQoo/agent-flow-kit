@@ -259,6 +259,7 @@ landing:
           role: Content edited with native tools
         - name: SQLite
           role: State, dependencies & hashes
+      directLabel: Direct read/write via native file tools
     items:
       - icon: laptop
         title: Local-first
