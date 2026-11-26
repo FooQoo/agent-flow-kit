@@ -4,6 +4,20 @@
   --vp-c-brand-3: #0a7a56;
   --vp-c-brand-soft: rgb(13 148 104 / 12%);
   --vp-home-hero-name-color: var(--vp-c-brand-1);
+
+  /* AFK Landing Page tokens (mint + charcoal, inspired by Agent Project / Agent Board) */
+  --lp-surface: #ffffff;
+  --lp-code-bg: #ffffff;
+  --lp-mint: #a4e0bd;
+  --lp-mint-soft: rgba(10, 122, 86, 0.1);
+  --lp-pending-bg: #fff6e3;
+  --lp-pending-border: #efd9a6;
+  --lp-pending-text: #9a5a06;
+  --lp-ai-bg: #e8f1fd;
+  --lp-ai-text: #1d4ed8;
+  --lp-band: #14191e;
+  --lp-band-text-2: #b4bdca;
+  --lp-shadow: 0 14px 36px rgba(20, 25, 30, 0.18);
 }
 
 .dark {
@@ -12,6 +26,19 @@
   --vp-c-brand-3: #34d399;
   --vp-c-brand-soft: rgb(126 232 184 / 12%);
   --vp-button-brand-text: #062118;
+
+  --lp-surface: var(--vp-c-bg-soft);
+  --lp-code-bg: #11151a;
+  --lp-mint: #a4e0bd;
+  --lp-mint-soft: rgba(164, 224, 189, 0.14);
+  --lp-pending-bg: #2a2210;
+  --lp-pending-border: #5a4716;
+  --lp-pending-text: #e9b04f;
+  --lp-ai-bg: #1e2a44;
+  --lp-ai-text: #9dbbff;
+  --lp-band: #0f1317;
+  --lp-band-text-2: #a1a8b3;
+  --lp-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
 }
 
 .vp-doc :is(p, li):lang(ja) {
@@ -20,4 +47,10 @@
 
 :where(.VPHero, .vp-doc) :is(h1, h2, h3):lang(ja) {
   word-break: auto-phrase;
+}
+
+/* Let the custom landing page span full width without extra bottom margin. */
+.VPPage:has(.landing),
+.VPHome:has(.landing) {
+  margin-bottom: 0;
 }

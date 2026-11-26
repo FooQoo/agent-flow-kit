@@ -17,24 +17,32 @@ export default defineConfig({
     root: {
       label: 'English',
       lang: 'en',
-      description: 'Plan, track, and resume work with your coding agent.',
+      description: 'A lightweight harness for AI agents to carry out work.',
       themeConfig: {
         nav: [
           { text: 'Install', link: '/guide/' },
           { text: 'Quickstart', link: '/guide/quickstart' },
         ],
+        footer: {
+          message: 'Agent Flow Kit — Delegate work. Stay in control.',
+          copyright: 'Open Source · Not affiliated with Anthropic or OpenAI.',
+        },
       },
     },
     ja: {
       label: '日本語',
       lang: 'ja',
       link: '/ja/',
-      description: 'AI エージェントに任せた作業の計画と進捗を、プロジェクトに残す。',
+      description: 'AI の仕事の遂行を支える軽量なハーネス。',
       themeConfig: {
         nav: [
           { text: 'インストール', link: '/ja/guide/' },
           { text: 'クイックスタート', link: '/ja/guide/quickstart' },
         ],
+        footer: {
+          message: 'Agent Flow Kit — Delegate work. Stay in control.',
+          copyright: 'Open Source · Anthropic および OpenAI の公式製品ではありません。',
+        },
         outline: { label: 'このページの内容' },
         darkModeSwitchLabel: '外観',
         langMenuLabel: '言語を変更',
