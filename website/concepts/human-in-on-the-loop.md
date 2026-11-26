@@ -11,7 +11,7 @@ description: How Agent Flow Kit centers on Human on the Loop and brings Human in
 
 ## Human on the Loop (HOTL)
 
-AFK's default posture is **Human on the Loop**: you do not babysit every file edit or tool call. You state the goal, review the plan when you want to, glance at automatic turn-end progress reports, and step in to adjust direction when needed.
+AFK's default posture is **Human on the Loop**: unlike Plan Mode, you do not have to review and approve a long plan document before every task or babysit every file edit. You state the goal, glance at automatic turn-end progress reports, and step in to adjust direction when needed (and you can still ask for a plan only whenever you want to review first).
 
 ## Human in the Loop (HITL)
 

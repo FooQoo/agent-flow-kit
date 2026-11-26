@@ -115,6 +115,9 @@ landing:
       planModeHeader: Built-in Plan Mode / Todos
       afkHeader: Agent Flow Kit (AFK)
       rows:
+        - axis: Upfront review
+          planMode: Requires reading and approving a long plan document before work starts every time.
+          afk: No mandatory plan review—runs right away and pauses only on real questions (plan-only mode is optional).
         - axis: Persistence & scope
           planMode: Ephemeral inside one session; fades on compaction or exit.
           afk: Stored in project-local .afk/; resumes cleanly across sessions and clients.
@@ -181,7 +184,7 @@ landing:
     harness:
       label: Agent Flow Kit
       text: Supports both sides with a deterministic state machine, SHA-256 spec guards, local persistence, and turn-end reporting. AFK does not run models or execute tasks itself.
-    note: Questions are reserved for unclear intent, human preferences, irreversible actions, or scope expansion—not rubber-stamp approvals on every step.
+    note: You do not have to review and approve a plan before every task like in Plan Mode. Questions are reserved for unclear intent, human preferences, irreversible actions, or scope expansion.
   features:
     eyebrow: Features
     title: Four mechanics Plan Mode doesn't give you.
