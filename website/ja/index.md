@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Agent Flow Kit
-description: AI の仕事の遂行を支える軽量なハーネス。既存の AI エージェントを置き換えるのではなく、仕事の進め方を拡張します。
+description: AI の仕事の遂行を支える軽量なハーネス。Plan Mode の先にある途中変更・完了検証・セッション跨ぎ再開をローカル状態で支えます。
 sidebar: false
 aside: false
 landing:
@@ -10,67 +10,90 @@ landing:
     done: コピーしました
   hero:
     eyebrow: Delegate work. Stay in control.
-    title: "いつものAIに、\n仕事を任せる仕組みを。"
-    lead: Agent Flow Kit は、AI の仕事の遂行を支える軽量なハーネスです。依頼から計画、質問、実行、完了まで。使い慣れた開発環境のまま、AI に仕事を任せられるようにします。
+    title: "計画を立てたあとも、\nやり遂げる仕組みを。"
+    lead: Agent Flow Kit は、AI の仕事の遂行を支える軽量なハーネスです。一時的な計画メモで終わらせず、途中の仕様変更・完了条件の検証・別セッションからの再開までをプロジェクト内の .afk/ で一貫して支えます。
     primary:
       text: はじめる
       link: /ja/guide/installation
     secondary:
       text: GitHub
       link: https://github.com/FooQoo/agent-flow-kit
-    meta: Claude Code / Codex · Local-first · Open Source
+    meta: Claude Code / Codex · Local-first (.afk/) · Rust + SQLite · Open Source
     demo:
-      header: Claude Code + AFK
+      header: .afk/ によるセッション跨ぎ再開と途中改訂
       sampleBadge: イメージ
-      ariaLabel: Claude Code 上で AFK を使って計画・質問・進捗表示を行う会話イメージ
+      ariaLabel: Session 1 で handoff を保存し、翌日の Session 2 で追加要件を取り込んで rev 2 から再開するターミナルイメージ
+      boundaryLabel: 翌日 · 新しいセッション（Claude Code / Codex）
       caption: ※ 表示イメージです。実際の出力形式は利用するクライアントや Hook 設定によって異なります。
-      turns:
-        - kind: prompt
-          text: 検索機能を改善して
-        - kind: reply
-          text: 計画を作成しました。1点確認させてください。
-        - kind: question
-          text: 検索結果は関連度順と新着順のどちらにしますか？
-        - kind: prompt
-          text: 関連度順でお願いします。
-        - kind: reply
-          text: 承知しました。実装を進めます。
+      sessions:
+        - label: "Session #1 — Claude Code"
+          turns:
+            - kind: prompt
+              text: /agent-flow-kit:afk handoff
+            - kind: saved
+              text: "Saved handoff for #4 (3/5 done) → .afk/afk.db"
+        - label: "Session #2 — 別セッションから再開"
+          turns:
+            - kind: prompt
+              text: 前回の続きを進めて。検索0件の表示も直して。
+            - kind: reply
+              text: ".afk/ から Plan #1 (rev 1) と handoff を復元。完了済み #1–#3 を証跡として残し rev 2 へ改訂します。"
       status:
         title: 検索機能の改善
-        progressText: 3/5 (60%)
-        percent: 60
+        revision: rev 2
+        progressText: 3/6 (50%)
+        percent: 50
         tasks:
           - state: done
-            text: 既存実装の調査
-          - state: done
-            text: 検索仕様の整理
-          - state: done
-            text: 検索ロジックの実装
+            text: "#1–#3 調査・仕様・検索ロジック"
+            tag: rev 1 証跡保持
           - state: doing
-            text: テストの追加
+            text: "#4 テストの追加"
+            tag: handoff から再開
           - state: todo
-            text: 完了条件の検証
+            text: "#6 検索0件表示の改善"
+            tag: 途中追加
   problem:
     eyebrow: Problem
-    title: AIは仕事ができる。でも、仕事を任せきれない。
+    title: 計画は立てられる。でも、そのあとが崩れる。
+    lead: 標準の Plan Mode や内蔵 Todo は「着手前の計画」には便利です。ただ、仕事が長引いたりセッションをまたいだりすると、別の問題が起きます。
     items:
       - icon: list-x
-        title: 計画通りに進まない
-        text: 長い仕事になると、当初の目的や作業内容が抜け落ちる。
-      - icon: message-circle-question
-        title: 勝手に判断される
-        text: 人間が決めるべき仕様まで、AI が推測して実装してしまう。
+        title: 途中変更で計画と実装がズレる
+        text: 追加依頼やコンテキスト圧縮が重なると、当初の完了条件や変更点が会話の奥へ流れてしまう。
       - icon: circle-check
-        title: 完了したか分からない
-        text: 本当に要件を満たしたのか、人間が改めて確認する必要がある。
+        title: 完了の証拠が残らない
+        text: 「完了しました」と言われても、すべての受け入れ条件が本当に検証されたのか後から追えない。
       - icon: history
-        title: 仕事の文脈が失われる
-        text: セッションが変わるたびに、計画や進捗を説明し直す。
-    closing: AI の能力だけでなく、仕事をやり遂げるための仕組みも必要です。
+        title: セッションを閉じるとリセットされる
+        text: 翌日や別エージェントで続きをやろうとすると、計画・決定事項・残タスクを説明し直す必要がある。
+      - icon: message-circle-question
+        title: 判断の経緯がチャットに埋もれる
+        text: 「なぜこの仕様にしたか」という質問と回答がログに埋もれ、再計画や引き継ぎで活かせない。
+    comparison:
+      title: 標準の Plan Mode / 内蔵 Todo との違い
+      lead: Plan Mode は 1 セッション内の一時的な計画メモ。AFK は完了まで状態と証跡を検証し続ける永続ハーネスです。
+      axisHeader: 観点
+      planModeHeader: 標準 Plan Mode / 内蔵 Todo
+      afkHeader: Agent Flow Kit (AFK)
+      rows:
+        - axis: 寿命と範囲
+          planMode: 1 セッション内の一時メモ。セッション終了や圧縮で薄れる。
+          afk: プロジェクト内 .afk/ に永続化。別セッションや別クライアントから再開可能。
+        - axis: 途中の仕様変更
+          planMode: チャット上で上書きされ、元の計画や完了分とズレやすい。
+          afk: 完了済みタスクを証跡として保持したまま、残タスクだけを Revision 改訂。
+        - axis: 完了の検証
+          planMode: AI の自己申告（「完了しました」）で終了できる。
+          afk: SHA-256 仕様ロック＋全受け入れ条件の番号検証＋## Result が必須のゲート。
+        - axis: 進捗の把握
+          planMode: チャットログを遡るか、AI に状況を聞き直す。
+          afk: Stop Hook が SQLite からターン末尾に自動報告（追加推論なし）。
+    closing: 必要なのは「最初に計画を書く機能」ではなく、完了まで状態と証跡を貫くハーネスです。
   workflow:
     eyebrow: Workflow
     title: 頼む。答える。あとは任せる。
-    lead: 不明点がなければ質問は省略でき、計画だけの依頼と実行依頼も区別します。
+    lead: 不明点がなければ質問は省略でき、計画だけの依頼（Backlog）と実行依頼（Todo）も明確に区別します。
     steps:
       - step: "01"
         title: 依頼する
@@ -81,24 +104,24 @@ landing:
         title: 計画する
         actor: ai
         actorLabel: AI
-        text: 仕事を分解し、タスクと完了条件を整理する。
+        text: 仕事を分解し、順序と完了条件（## Acceptance）を整理する。
       - step: "03"
         title: 不明点を解消する
         actor: both
         actorLabel: Human + AI
-        text: 人間の判断が必要なことだけを質問する。
+        text: 人間の判断が必要なことだけを質問し、回答を封印する。
       - step: "04"
         title: 実行する
         actor: ai
         actorLabel: AI
-        text: 計画に沿って仕事を進め、結果を記録する。
+        text: 依存関係どおりに進め、検証結果を ## Result に記録する。
       - step: "05"
         title: 完了する
         actor: ai
         actorLabel: AI
-        text: 完了条件を検証し、仕事の結果を報告する。
+        text: 全完了条件をゲート検証し、結果を報告する。
     adaptTitle: いつでも方向を変えられる。
-    adaptText: 実行途中でも依頼を追加し、計画や完了条件を修正できます。変更の反映タイミングは利用するクライアントの会話境界に従います。
+    adaptText: 実行途中でも依頼を追加し、完了済みタスクは証跡として残したまま新リビジョンで再計画できます。変更の反映タイミングは利用するクライアントの会話境界に従います。
   humanOnTheLoop:
     eyebrow: Human on the Loop
     title: 仕事はAIに。主導権はあなたに。
@@ -116,81 +139,102 @@ landing:
       items:
         - 仕事を計画する
         - 実行・検証する
-        - 進捗を報告する
+        - 証跡を残して完了する
     harness:
       label: Agent Flow Kit
-      text: 構造・進行支援・状態管理・進捗報告で両者の仕事の進め方を支えます。AFK 自体が推論やコード実行を行うわけではありません。
+      text: 構造・状態機械・仕様ハッシュ検証・永続化・進捗報告で両者を支えます。AFK 自体が推論やコード実行を行うわけではありません。
     note: 質問を行うのは、意図が不明なとき・人間の選好で決まるとき・不可逆な操作・依頼範囲の拡大などに限られます。常に一律の承認を要求するわけではありません。
   features:
     eyebrow: Features
-    title: 仕事を任せるための4つの仕組み。
+    title: Plan Mode にはない、4 つの実行ハーネス。
     items:
-      - kind: plan
-        eyebrow: PLAN
-        title: 計画とタスク分解
-        text: 大きな依頼を実行可能な単位に分解。順序と完了条件を整理して管理します。
-        visualTitle: 検索機能の改善
-        items:
-          - state: done
-            text: 要件整理
-          - state: done
-            text: 設計
-          - state: todo
-            text: 実装
-          - state: todo
-            text: テスト
-      - kind: question
-        eyebrow: QUESTION
-        title: 必要なときだけ質問
-        text: 人間の意図や選好が必要な場面では、勝手に判断せず質問として切り出して確認します。
-        visualTitle: 検索結果の並び順は？
-        items:
-          - text: 関連度順
-          - text: 新着順
+      - kind: revision
+        eyebrow: REVISION
+        title: 履歴を壊さない途中改訂
+        text: 途中で要件が増えても、完了済みタスクは証跡として保持したまま、残タスクだけを新しいリビジョンへ差し替えます。
+        visualTitle: Plan #1 · 途中依頼の反映
+        revision:
+          from: rev 1
+          to: rev 2
+          rows:
+            - id: "#1–#3"
+              state: done
+              badge: 証跡保持
+              text: 調査・仕様・検索ロジック
+            - id: "#5"
+              state: retired
+              badge: 差し替え
+              text: 旧・単純表示の確認
+            - id: "#4"
+              state: todo
+              badge: 継続
+              text: テストの追加
+            - id: "#6"
+              state: added
+              badge: 追加要件
+              text: 検索0件表示の改善
+      - kind: gate
+        eyebrow: VERIFICATION GATE
+        title: 決定論的な完了ゲートと仕様ロック
+        text: 確定した仕様は SHA-256 で保護。すべての受け入れ条件（## Acceptance）の検証番号と ## Result の証跡が揃うまで Done になりません。
+        visualTitle: finish_task 検証ゲート
+        gate:
+          command: "finish_task(plan_id=1, task_id=4, verified=[1, 2, 3])"
+          checks:
+            - label: spec_hash (SHA-256)
+              value: 一致・未改変
+            - label: "## Acceptance (1..=3)"
+              value: 全 3 項目検証済み
+            - label: "## Result 証跡"
+              value: 記録済み
+          outcome: "✓ Gate passed → Task #4: Done"
+      - kind: handoff
+        eyebrow: HANDOFF & .afk/
+        title: セッション・クライアントを跨ぐ継続
+        text: 依頼・計画・質問・結果をプロジェクト内の .afk/ に保存。handoff メモを残せば、別セッションや別クライアントからも安全に引き継げます。
+        visualTitle: .afk/ + handoff
+        handoff:
+          tree:
+            - ".afk/"
+            - "├── afk.db        # 状態・依存・ハッシュ"
+            - "├── plans/        # リビジョン別計画"
+            - "├── tasks/        # 完了条件・実行履歴・Result"
+            - "├── requests/     # 初回＆途中依頼"
+            - "└── questions/    # 質問と封印済み回答"
+          noteLabel: "handoff (Attempt 1: claude-code → Attempt 2: codex)"
+          noteText: "検索ロジック実装済み。残りはテスト追加と0件表示の境界値確認。"
       - kind: progress
-        eyebrow: PROGRESS
-        title: 自動的な進捗報告
-        text: 会話ターンの最後に Stop Hook で進捗を表示。毎回こちらから状況を聞く必要がありません。
-        note: 追加のモデル推論や報告専用 Tool Call を要求しない設計です。表示形式はクライアントにより異なります。
+        eyebrow: STOP HOOK
+        title: 追加推論なしの自動進捗報告
+        text: 会話ターンの末尾に Stop Hook が SQLite を読み取り専用で参照し、現在地を自動表示。毎回こちらから状況を聞く必要がありません。
+        note: 報告専用の Tool Call や追加モデル推論を要求しない設計です。表示形式はクライアントにより異なります。
         visualTitle: Turn-end report
         progress:
           percent: 60
-          label: 60%
-          detail: 3 of 5 tasks completed
+          tag: 0 model tokens
+          detail: SQLite から直接集計（読み取り専用・fail-open）
           banner: "AFK · 検索機能の改善 [Doing] · 3/5 complete · Next: テストの追加"
-      - kind: workspace
-        eyebrow: WORKSPACE
-        title: セッションを超えた継続
-        text: 依頼・計画・タスク・質問をプロジェクト直下の .afk/ に保存。セッションをまたいでも状態を引き継げます。
-        visualTitle: .afk/
-        tree:
-          - ".afk/"
-          - "├── plans/"
-          - "├── tasks/"
-          - "├── requests/"
-          - "├── questions/"
-          - "└── afk.db"
   efficiency:
-    eyebrow: Efficiency
-    title: AIには、仕事に集中してもらう。
-    lead: AI に管理業務をさせるのではなく、プログラムで処理できる決定論的な管理は AFK（Rust）へ移譲する設計方針をとっています。
+    eyebrow: State Machine & Efficiency
+    title: 「お願い」ではなく、状態機械で支える。
+    lead: プロンプトや Plan Mode だけでは管理ルールが会話の文脈に流されます。決定論的な状態遷移・検証・集計を Rust + SQLite へ移譲することで、AI が推論と実装に集中できる設計をとっています。
     ai:
       badge: AI Agent
       title: AIが担当すること：推論・創造・実行
       items:
-        - 計画の立案
-        - 仕様の理解
+        - 計画の立案と再計画
+        - 仕様の理解と実装
         - 成果物の作成
-        - 結果の検証
+        - 完了条件の実検証
     afk:
-      badge: AFK (Rust)
-      title: AFKが担当すること：決定論的な管理処理
+      badge: AFK (Rust + SQLite)
+      title: AFKが担当すること：決定論的な管理・検証
       items:
-        - 状態の管理
-        - 実行順序・依存関係の管理
-        - 進捗の集計
-        - データの永続化
-    note: トークン効率と管理負担の低減は設計目標であり、標準エージェント単体との比較ベンチマークは実測データが揃い次第公開予定です。
+        - 状態遷移と依存関係の強制
+        - 仕様ハッシュ（SHA-256）の整合性検証
+        - 未回答質問・未反映依頼のゲート制御
+        - 進捗集計と .afk/ への永続化
+    note: 管理負担とトークン消費の低減は設計目標であり、標準エージェント単体との比較ベンチマークは実測データが揃い次第公開予定です。
   architecture:
     eyebrow: Architecture
     title: 新しい開発環境は、必要ありません。
@@ -204,17 +248,17 @@ landing:
       kitLabel: Agent Flow Kit (Plugin)
       kit:
         - name: MCP
-          role: 進行支援・状態操作
+          role: 状態機械・検証ゲート
         - name: Skills
           role: 仕事の進め方の指針
         - name: Hooks
-          role: ターン末尾の進捗報告
+          role: ターン末尾の自動進捗報告
       storageLabel: Project (.afk/)
       storage:
         - name: Markdown
           role: AI が標準ツールで読み書きする本文
         - name: SQLite
-          role: AFK が管理する状態・順序
+          role: AFK が管理する状態・依存・ハッシュ
     items:
       - icon: laptop
         title: Local-first
@@ -258,7 +302,7 @@ landing:
       link: /ja/guide/installation
     cta:
       tagline: "Delegate work.\nStay in control."
-      sub: AI に仕事を任せる、新しい当たり前。
+      sub: Plan Mode の先にある、やり遂げるための軽量ハーネス。
       primary:
         text: Agent Flow Kit をはじめる
         link: /ja/guide/installation

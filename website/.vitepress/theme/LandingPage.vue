@@ -3,19 +3,37 @@ import { computed, ref } from 'vue'
 import { useData, withBase } from 'vitepress'
 import LandingIcon from './LandingIcon.vue'
 
-type Link = { text: string; link: string }
 type ProblemItem = { icon: string; title: string; text: string }
+type DiffRow = { axis: string; planMode: string; afk: string }
 type WorkflowStep = { step: string; title: string; actor: 'human' | 'ai' | 'both'; actorLabel: string; text: string }
 type FeatureItem = {
-  kind: 'plan' | 'question' | 'progress' | 'workspace'
+  kind: 'revision' | 'gate' | 'handoff' | 'progress'
   eyebrow: string
   title: string
   text: string
   note?: string
   visualTitle: string
-  items?: { state?: 'done' | 'doing' | 'todo'; text: string }[]
-  progress?: { percent: number; label: string; detail: string; banner: string }
-  tree?: string[]
+  revision?: {
+    from: string
+    to: string
+    rows: { id: string; state: 'done' | 'retired' | 'added' | 'todo'; badge: string; text: string }[]
+  }
+  gate?: {
+    command: string
+    checks: { label: string; value: string }[]
+    outcome: string
+  }
+  handoff?: {
+    tree: string[]
+    noteLabel: string
+    noteText: string
+  }
+  progress?: {
+    percent: number
+    detail: string
+    banner: string
+    tag: string
+  }
 }
 type TrustItem = { icon: string; title: string; text: string }
 type InstallClient = { id: string; label: string; commands: string[] }
@@ -91,17 +109,29 @@ async function copyText(key: string, text: string) {
               <span class="lp-demo__tag">{{ c.hero.demo.sampleBadge }}</span>
             </div>
             <div class="lp-demo__body">
-              <div v-for="(turn, idx) in c.hero.demo.turns" :key="idx" class="lp-demo__turn">
-                <p v-if="turn.kind === 'prompt'" class="lp-demo__prompt">
-                  <span class="lp-demo__caret" aria-hidden="true">❯</span> {{ turn.text }}
-                </p>
-                <p v-else-if="turn.kind === 'question'" class="lp-demo__question">{{ turn.text }}</p>
-                <p v-else class="lp-demo__reply">{{ turn.text }}</p>
+              <div
+                v-for="(session, sIdx) in c.hero.demo.sessions"
+                :key="sIdx"
+                class="lp-demo__session"
+              >
+                <div v-if="sIdx > 0" class="lp-demo__divider">
+                  <span>{{ c.hero.demo.boundaryLabel }}</span>
+                </div>
+                <p class="lp-demo__session-label">{{ session.label }}</p>
+                <div v-for="(turn, tIdx) in session.turns" :key="tIdx" class="lp-demo__turn">
+                  <p v-if="turn.kind === 'prompt'" class="lp-demo__prompt">
+                    <span class="lp-demo__caret" aria-hidden="true">❯</span> {{ turn.text }}
+                  </p>
+                  <p v-else-if="turn.kind === 'saved'" class="lp-demo__saved">{{ turn.text }}</p>
+                  <p v-else class="lp-demo__reply">{{ turn.text }}</p>
+                </div>
               </div>
+
               <div class="lp-demo__status">
                 <div class="lp-demo__status-head">
                   <span class="lp-demo__badge">[AFK]</span>
                   <span class="lp-demo__plan">{{ c.hero.demo.status.title }}</span>
+                  <span class="lp-demo__rev">{{ c.hero.demo.status.revision }}</span>
                   <span class="lp-demo__pct">{{ c.hero.demo.status.progressText }}</span>
                 </div>
                 <div class="lp-progress-bar" aria-hidden="true">
@@ -116,7 +146,8 @@ async function copyText(key: string, text: string) {
                     <span class="lp-state-mark" aria-hidden="true">
                       {{ task.state === 'done' ? '✓' : task.state === 'doing' ? '●' : '○' }}
                     </span>
-                    <span>{{ task.text }}</span>
+                    <span class="lp-demo__task-text">{{ task.text }}</span>
+                    <span v-if="task.tag" class="lp-demo__task-tag">{{ task.tag }}</span>
                   </li>
                 </ul>
               </div>
@@ -127,12 +158,13 @@ async function copyText(key: string, text: string) {
       </div>
     </section>
 
-    <!-- 02. Problem -->
+    <!-- 02. Problem + Plan Mode Comparison -->
     <section class="lp-section">
       <div class="lp-container">
         <header class="lp-heading">
           <p class="lp-eyebrow">{{ c.problem.eyebrow }}</p>
           <h2>{{ c.problem.title }}</h2>
+          <p v-if="c.problem.lead" class="lp-lead">{{ c.problem.lead }}</p>
         </header>
         <ul class="lp-problem-grid">
           <li v-for="item in c.problem.items as ProblemItem[]" :key="item.title" class="lp-card lp-problem-card">
@@ -143,6 +175,34 @@ async function copyText(key: string, text: string) {
             <p>{{ item.text }}</p>
           </li>
         </ul>
+
+        <div v-if="c.problem.comparison" class="lp-diff">
+          <div class="lp-diff__head">
+            <h3>{{ c.problem.comparison.title }}</h3>
+            <p>{{ c.problem.comparison.lead }}</p>
+          </div>
+          <div class="lp-diff__table" role="table" :aria-label="c.problem.comparison.title">
+            <div class="lp-diff__row lp-diff__row--head" role="row">
+              <span role="columnheader">{{ c.problem.comparison.axisHeader }}</span>
+              <span role="columnheader">{{ c.problem.comparison.planModeHeader }}</span>
+              <span role="columnheader" class="is-afk">{{ c.problem.comparison.afkHeader }}</span>
+            </div>
+            <div
+              v-for="row in c.problem.comparison.rows as DiffRow[]"
+              :key="row.axis"
+              class="lp-diff__row"
+              role="row"
+            >
+              <span class="lp-diff__axis" role="cell">{{ row.axis }}</span>
+              <span class="lp-diff__muted" role="cell">{{ row.planMode }}</span>
+              <span class="lp-diff__afk" role="cell">
+                <LandingIcon name="check" :size="15" class="lp-ink--brand" />
+                <span>{{ row.afk }}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
         <p class="lp-problem__closing">{{ c.problem.closing }}</p>
       </div>
     </section>
@@ -190,7 +250,7 @@ async function copyText(key: string, text: string) {
         </header>
         <div class="lp-hotl">
           <div class="lp-hotl__roles">
-            <article class="lp-card lp-hotl__card lp-hotl__card--human">
+            <article class="lp-card lp-hotl__card">
               <p class="lp-chip lp-chip--human">{{ c.humanOnTheLoop.human.badge }}</p>
               <h3>{{ c.humanOnTheLoop.human.title }}</h3>
               <ul class="lp-hotl__list">
@@ -200,7 +260,7 @@ async function copyText(key: string, text: string) {
                 </li>
               </ul>
             </article>
-            <article class="lp-card lp-hotl__card lp-hotl__card--ai">
+            <article class="lp-card lp-hotl__card">
               <p class="lp-chip lp-chip--ai">{{ c.humanOnTheLoop.ai.badge }}</p>
               <h3>{{ c.humanOnTheLoop.ai.title }}</h3>
               <ul class="lp-hotl__list">
@@ -220,7 +280,7 @@ async function copyText(key: string, text: string) {
       </div>
     </section>
 
-    <!-- 05. Features -->
+    <!-- 05. Features (AFK-specific mechanisms) -->
     <section class="lp-section lp-section--soft">
       <div class="lp-container">
         <header class="lp-heading">
@@ -233,41 +293,59 @@ async function copyText(key: string, text: string) {
             :key="f.title"
             class="lp-feature"
           >
-            <div class="lp-feature__panel" :class="`lp-feature__panel--${f.kind}`">
+            <div class="lp-feature__panel">
               <div class="lp-mock">
                 <div class="lp-mock__head">
                   <span class="lp-mock__tag">{{ f.eyebrow }}</span>
                   <span class="lp-mock__title">{{ f.visualTitle }}</span>
                 </div>
 
-                <ul v-if="f.kind === 'plan' && f.items" class="lp-mock__list">
-                  <li v-for="it in f.items" :key="it.text" :class="`is-${it.state}`">
-                    <span class="lp-state-mark" aria-hidden="true">
-                      {{ it.state === 'done' ? '✓' : it.state === 'doing' ? '●' : '○' }}
-                    </span>
-                    <span>{{ it.text }}</span>
-                  </li>
-                </ul>
+                <!-- Revision replan visual -->
+                <div v-if="f.kind === 'revision' && f.revision" class="lp-mock__rev">
+                  <p class="lp-mock__rev-meta">{{ f.revision.from }} → <strong>{{ f.revision.to }}</strong></p>
+                  <ul class="lp-mock__list">
+                    <li v-for="row in f.revision.rows" :key="row.id" :class="`is-${row.state}`">
+                      <span class="lp-mock__id">{{ row.id }}</span>
+                      <span class="lp-mock__row-text">{{ row.text }}</span>
+                      <span class="lp-mock__pill" :class="`is-${row.state}`">{{ row.badge }}</span>
+                    </li>
+                  </ul>
+                </div>
 
-                <ol v-else-if="f.kind === 'question' && f.items" class="lp-mock__options">
-                  <li v-for="(it, idx) in f.items" :key="it.text">
-                    <span class="lp-mock__opt-num">{{ idx + 1 }}.</span>
-                    <span>{{ it.text }}</span>
-                  </li>
-                </ol>
+                <!-- Deterministic verification gate visual -->
+                <div v-else-if="f.kind === 'gate' && f.gate" class="lp-mock__gate">
+                  <p class="lp-mock__cmd">{{ f.gate.command }}</p>
+                  <ul class="lp-mock__checks">
+                    <li v-for="chk in f.gate.checks" :key="chk.label">
+                      <span class="lp-mock__ok" aria-hidden="true">✓</span>
+                      <span class="lp-mock__chk-label">{{ chk.label }}</span>
+                      <span class="lp-mock__chk-val">{{ chk.value }}</span>
+                    </li>
+                  </ul>
+                  <p class="lp-mock__outcome">{{ f.gate.outcome }}</p>
+                </div>
 
+                <!-- Handoff + .afk/ visual -->
+                <div v-else-if="f.kind === 'handoff' && f.handoff" class="lp-mock__handoff">
+                  <pre class="lp-mock__tree"><code>{{ f.handoff.tree.join('\n') }}</code></pre>
+                  <div class="lp-mock__handoff-note">
+                    <span>{{ f.handoff.noteLabel }}</span>
+                    <p>{{ f.handoff.noteText }}</p>
+                  </div>
+                </div>
+
+                <!-- Stop Hook progress visual -->
                 <div v-else-if="f.kind === 'progress' && f.progress" class="lp-mock__progress">
                   <div class="lp-mock__progress-row">
                     <strong>{{ f.progress.percent }}%</strong>
-                    <span>{{ f.progress.detail }}</span>
+                    <span class="lp-mock__pill is-done">{{ f.progress.tag }}</span>
                   </div>
+                  <p class="lp-mock__detail">{{ f.progress.detail }}</p>
                   <div class="lp-progress-bar" aria-hidden="true">
                     <span class="lp-progress-bar__fill" :style="{ width: `${f.progress.percent}%` }" />
                   </div>
                   <p class="lp-mock__banner">{{ f.progress.banner }}</p>
                 </div>
-
-                <pre v-else-if="f.kind === 'workspace' && f.tree" class="lp-mock__tree"><code>{{ f.tree.join('\n') }}</code></pre>
               </div>
             </div>
 
@@ -282,7 +360,7 @@ async function copyText(key: string, text: string) {
       </div>
     </section>
 
-    <!-- 06. Efficiency -->
+    <!-- 06. Efficiency / Deterministic State Machine -->
     <section class="lp-section">
       <div class="lp-container">
         <header class="lp-heading">
@@ -705,7 +783,7 @@ async function copyText(key: string, text: string) {
 }
 .lp-demo {
   overflow: hidden;
-  border: 1px solid rgba(164, 224, 189, 0.22);
+  border: 1px solid rgba(164, 224, 189, 0.24);
   border-radius: 14px;
   background: var(--lp-band);
   color: #e6edf3;
@@ -747,10 +825,37 @@ async function copyText(key: string, text: string) {
 .lp-demo__body {
   display: grid;
   gap: 10px;
-  padding: 18px 20px;
+  padding: 16px 18px;
   font-family: var(--vp-font-family-mono);
-  font-size: 13px;
-  line-height: 1.65;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+.lp-demo__session {
+  display: grid;
+  gap: 6px;
+}
+.lp-demo__session-label {
+  color: #8c98a6;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.lp-demo__divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0;
+  color: #e9b04f;
+  font-size: 11px;
+  font-weight: 700;
+}
+.lp-demo__divider::before,
+.lp-demo__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(233, 176, 79, 0.35);
 }
 .lp-demo__prompt {
   color: #ffffff;
@@ -762,18 +867,19 @@ async function copyText(key: string, text: string) {
 .lp-demo__reply {
   color: #b8c4d0;
 }
-.lp-demo__question {
-  padding: 8px 12px;
-  border-left: 3px solid #e9b04f;
+.lp-demo__saved {
+  padding: 6px 10px;
+  border-left: 3px solid var(--lp-mint);
   border-radius: 0 6px 6px 0;
-  background: rgba(233, 176, 79, 0.1);
-  color: #f4d28b;
+  background: rgba(164, 224, 189, 0.09);
+  color: var(--lp-mint);
+  font-size: 12px;
 }
 .lp-demo__status {
   display: grid;
-  gap: 10px;
-  margin-top: 6px;
-  padding: 14px;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 12px 14px;
   border: 1px solid rgba(164, 224, 189, 0.24);
   border-radius: 10px;
   background: rgba(164, 224, 189, 0.06);
@@ -791,6 +897,14 @@ async function copyText(key: string, text: string) {
 }
 .lp-demo__plan {
   color: #ffffff;
+  font-weight: 700;
+}
+.lp-demo__rev {
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: rgba(164, 224, 189, 0.18);
+  color: var(--lp-mint);
+  font-size: 11px;
   font-weight: 700;
 }
 .lp-demo__pct {
@@ -828,7 +942,19 @@ async function copyText(key: string, text: string) {
   font-weight: 600;
 }
 .lp-demo__tasks li.is-todo {
-  color: #8c98a6;
+  color: #9aa7b4;
+}
+.lp-demo__task-text {
+  min-width: 0;
+}
+.lp-demo__task-tag {
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #c9d4de;
+  font-size: 10.5px;
+  white-space: nowrap;
 }
 .lp-state-mark {
   width: 14px;
@@ -853,9 +979,9 @@ async function copyText(key: string, text: string) {
     padding: 84px 0 92px;
   }
   .lp-hero__grid {
-    grid-template-columns: minmax(0, 520px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 500px) minmax(0, 1fr);
     align-items: center;
-    gap: 56px;
+    gap: 48px;
   }
   .lp-hero__copy {
     gap: 24px;
@@ -866,7 +992,7 @@ async function copyText(key: string, text: string) {
   }
 }
 
-/* 02. Problem */
+/* 02. Problem + Plan Mode comparison */
 .lp-problem-grid {
   display: grid;
   gap: 16px;
@@ -880,6 +1006,81 @@ async function copyText(key: string, text: string) {
   border-radius: 10px;
   background: var(--lp-mint-soft);
   color: var(--vp-c-brand-1);
+}
+.lp-diff {
+  margin-top: 44px;
+  padding: 24px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 16px;
+  background: var(--vp-c-bg-soft);
+}
+.lp-diff__head {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.lp-diff__head h3 {
+  font-size: 19px;
+  font-weight: 800;
+}
+.lp-diff__head p {
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.lp-diff__table {
+  display: grid;
+  gap: 8px;
+}
+.lp-diff__row {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 10px;
+  background: var(--lp-surface);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.lp-diff__row--head {
+  display: none;
+  padding: 8px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--vp-c-text-2);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.lp-diff__row--head .is-afk {
+  color: var(--vp-c-brand-1);
+}
+.lp-diff__axis {
+  font-weight: 800;
+  color: var(--vp-c-text-1);
+}
+.lp-diff__muted {
+  color: var(--vp-c-text-2);
+}
+.lp-diff__afk {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+}
+.lp-diff__afk .lp-icon {
+  margin-top: 4px;
+}
+@media (min-width: 768px) {
+  .lp-diff__row--head {
+    display: grid;
+  }
+  .lp-diff__row {
+    grid-template-columns: 180px 1fr 1.25fr;
+    align-items: start;
+    gap: 20px;
+  }
 }
 .lp-problem__closing {
   margin-top: 32px;
@@ -1003,7 +1204,7 @@ async function copyText(key: string, text: string) {
   align-items: center;
 }
 .lp-feature__panel {
-  padding: 24px;
+  padding: 22px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 16px;
   background: var(--lp-band);
@@ -1011,9 +1212,9 @@ async function copyText(key: string, text: string) {
 }
 .lp-mock {
   display: grid;
-  gap: 14px;
+  gap: 12px;
   font-family: var(--vp-font-family-mono);
-  font-size: 13px;
+  font-size: 12.5px;
 }
 .lp-mock__head {
   display: flex;
@@ -1035,48 +1236,144 @@ async function copyText(key: string, text: string) {
   color: #ffffff;
   font-weight: 700;
 }
+.lp-mock__rev {
+  display: grid;
+  gap: 10px;
+}
+.lp-mock__rev-meta {
+  color: #9aa7b4;
+  font-size: 12px;
+}
+.lp-mock__rev-meta strong {
+  color: var(--lp-mint);
+}
 .lp-mock__list {
   display: grid;
-  gap: 8px;
+  gap: 7px;
 }
 .lp-mock__list li {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-.lp-mock__list li.is-done {
-  color: var(--lp-mint);
-}
-.lp-mock__list li.is-doing {
-  color: #ffffff;
-}
-.lp-mock__list li.is-todo {
-  color: #9aa7b4;
-}
-.lp-mock__options {
-  display: grid;
-  gap: 8px;
-}
-.lp-mock__options li {
-  display: flex;
-  gap: 8px;
-  padding: 10px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
   background: rgba(255, 255, 255, 0.03);
+}
+.lp-mock__list li.is-retired {
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+.lp-mock__id {
+  color: #8c98a6;
+  font-weight: 700;
+}
+.lp-mock__row-text {
+  min-width: 0;
   color: #e6edf3;
 }
-.lp-mock__opt-num {
+.lp-mock__pill {
+  margin-left: auto;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.lp-mock__pill.is-done {
+  background: rgba(164, 224, 189, 0.18);
+  color: var(--lp-mint);
+}
+.lp-mock__pill.is-added {
+  background: rgba(107, 154, 255, 0.2);
+  color: #9dbbff;
+}
+.lp-mock__pill.is-retired {
+  background: rgba(255, 255, 255, 0.08);
+  color: #9aa7b4;
+}
+.lp-mock__pill.is-todo {
+  background: rgba(233, 176, 79, 0.18);
+  color: #f4d28b;
+}
+
+.lp-mock__gate {
+  display: grid;
+  gap: 10px;
+}
+.lp-mock__cmd {
+  color: #c9d4de;
+  font-size: 12px;
+}
+.lp-mock__checks {
+  display: grid;
+  gap: 6px;
+}
+.lp-mock__checks li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.lp-mock__ok {
   color: var(--lp-mint);
   font-weight: 700;
 }
+.lp-mock__chk-label {
+  color: #ffffff;
+}
+.lp-mock__chk-val {
+  margin-left: auto;
+  color: var(--lp-mint);
+  font-size: 11.5px;
+}
+.lp-mock__outcome {
+  padding: 8px 10px;
+  border: 1px solid rgba(164, 224, 189, 0.35);
+  border-radius: 8px;
+  background: rgba(164, 224, 189, 0.1);
+  color: var(--lp-mint);
+  font-weight: 700;
+}
+
+.lp-mock__handoff {
+  display: grid;
+  gap: 12px;
+}
+.lp-mock__tree {
+  overflow-x: auto;
+  color: var(--lp-mint);
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+.lp-mock__handoff-note {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-left: 3px solid #e9b04f;
+  border-radius: 0 8px 8px 0;
+  background: rgba(233, 176, 79, 0.08);
+}
+.lp-mock__handoff-note span {
+  color: #f4d28b;
+  font-size: 11px;
+  font-weight: 700;
+}
+.lp-mock__handoff-note p {
+  color: #e6edf3;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 .lp-mock__progress {
   display: grid;
   gap: 10px;
 }
 .lp-mock__progress-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
@@ -1084,7 +1381,7 @@ async function copyText(key: string, text: string) {
   color: var(--lp-mint);
   font-size: 22px;
 }
-.lp-mock__progress-row span {
+.lp-mock__detail {
   color: #b8c4d0;
   font-size: 12px;
 }
@@ -1096,12 +1393,7 @@ async function copyText(key: string, text: string) {
   font-size: 12px;
   line-height: 1.6;
 }
-.lp-mock__tree {
-  overflow-x: auto;
-  color: var(--lp-mint);
-  font-size: 13px;
-  line-height: 1.75;
-}
+
 .lp-feature__text {
   display: grid;
   gap: 12px;

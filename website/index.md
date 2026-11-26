@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Agent Flow Kit
-description: A lightweight harness for AI agents to carry out work. Don't replace your AI agent. Extend how it works.
+description: A lightweight harness for AI agents to carry out work—going beyond ephemeral Plan Mode with durable .afk/ state, revisioned replanning, verification gates, and cross-session handoff.
 sidebar: false
 aside: false
 landing:
@@ -10,67 +10,90 @@ landing:
     done: Copied
   hero:
     eyebrow: Delegate work. Stay in control.
-    title: "Give your AI agent\na way to finish the job."
-    lead: Agent Flow Kit is a lightweight harness for AI agents to carry out work. From request and plan to clarifying questions, execution, and completion—extend your existing agent without leaving your workflow.
+    title: "Beyond Plan Mode:\na harness that finishes the job."
+    lead: Agent Flow Kit is a lightweight harness for AI agents to carry out work. Instead of ephemeral chat plans, it persists requests, revisioned plans, acceptance gates, and handoff state in project-local .afk/ files across sessions.
     primary:
       text: Get started
       link: /guide/installation
     secondary:
       text: GitHub
       link: https://github.com/FooQoo/agent-flow-kit
-    meta: Claude Code / Codex · Local-first · Open Source
+    meta: Claude Code / Codex · Local-first (.afk/) · Rust + SQLite · Open Source
     demo:
-      header: Claude Code + AFK
+      header: Cross-session resume & revisioned replanning via .afk/
       sampleBadge: Sample
-      ariaLabel: Illustrative terminal conversation showing planning, a clarifying question, and AFK task progress
+      ariaLabel: Illustrative terminal showing Session 1 saving a handoff and Session 2 resuming from .afk/ with a mid-work requirement revised to rev 2
+      boundaryLabel: Next day · New session (Claude Code or Codex)
       caption: Illustrative example. Exact formatting depends on the host client and hook configuration.
-      turns:
-        - kind: prompt
-          text: Improve the search feature
-        - kind: reply
-          text: "I drafted a plan. One question before starting:"
-        - kind: question
-          text: Should search results be sorted by relevance or newest first?
-        - kind: prompt
-          text: Sort by relevance.
-        - kind: reply
-          text: Got it. Proceeding with the implementation.
+      sessions:
+        - label: "Session #1 — Claude Code"
+          turns:
+            - kind: prompt
+              text: /agent-flow-kit:afk handoff
+            - kind: saved
+              text: "Saved handoff for #4 (3/5 done) → .afk/afk.db"
+        - label: "Session #2 — Resumed in a new session"
+          turns:
+            - kind: prompt
+              text: Continue from last time, and also fix the empty-results view.
+            - kind: reply
+              text: "Loaded Plan #1 (rev 1) & handoff from .afk/. Keeping #1–#3 as verified evidence and revising to rev 2."
       status:
         title: Improve search feature
-        progressText: 3/5 (60%)
-        percent: 60
+        revision: rev 2
+        progressText: 3/6 (50%)
+        percent: 50
         tasks:
           - state: done
-            text: Inspect existing search implementation
-          - state: done
-            text: Define ranking specification
-          - state: done
-            text: Implement search logic
+            text: "#1–#3 Audit, spec & search logic"
+            tag: rev 1 evidence
           - state: doing
-            text: Add automated tests
+            text: "#4 Add automated tests"
+            tag: from handoff
           - state: todo
-            text: Verify acceptance conditions
+            text: "#6 Fix empty-results view"
+            tag: added mid-work
   problem:
     eyebrow: Problem
-    title: AI can code. Handing off real work is still hard.
+    title: Drafting a plan is easy. Keeping it intact is hard.
+    lead: Built-in Plan Mode and todo lists help before you start. Once work spans long turns, mid-work changes, or multiple sessions, different failure modes appear.
     items:
       - icon: list-x
-        title: Plans drift mid-way
-        text: Over longer tasks, the original goal and requirements quietly drop out of view.
-      - icon: message-circle-question
-        title: Unasked assumptions
-        text: The agent guesses product decisions that should have been confirmed with a human.
+        title: Plans drift on mid-work changes
+        text: Follow-up requirements and context compaction quietly separate the original plan from what is actually being built.
       - icon: circle-check
-        title: Unclear completion
-        text: You still have to manually audit whether every requirement was actually satisfied.
+        title: No durable proof of completion
+        text: When an agent says "done", there is no structured record of which acceptance checks were actually verified.
       - icon: history
-        title: Context resets between sessions
-        text: Starting a new session means re-explaining the plan, decisions, and remaining work.
-    closing: Capable models still need a reliable workflow harness to carry work across the finish line.
+        title: Closing the session resets context
+        text: Picking up tomorrow—or in another agent—means re-explaining the plan, past decisions, and remaining tasks.
+      - icon: message-circle-question
+        title: Decisions get buried in chat logs
+        text: Clarifying questions and human answers disappear into scrollback instead of staying attached to the plan.
+    comparison:
+      title: How AFK differs from Plan Mode & built-in Todos
+      lead: Plan Mode is an ephemeral single-session scratchpad. AFK is a persistent, state-checked harness that carries work to verified completion.
+      axisHeader: Dimension
+      planModeHeader: Built-in Plan Mode / Todos
+      afkHeader: Agent Flow Kit (AFK)
+      rows:
+        - axis: Persistence & scope
+          planMode: Ephemeral inside one session; fades on compaction or exit.
+          afk: Stored in project-local .afk/; resumes cleanly across sessions and clients.
+        - axis: Mid-work changes
+          planMode: Overwritten in chat; hard to tell what was already verified.
+          afk: Keeps completed tasks as evidence while revising remaining tasks in a new revision.
+        - axis: Completion check
+          planMode: Self-reported by the model ("All done!").
+          afk: Enforced gate requiring SHA-256 spec match, every acceptance bullet verified, and ## Result.
+        - axis: Progress visibility
+          planMode: Scroll through chat or spend a turn asking for status.
+          afk: Stop Hook reads SQLite directly at turn end with zero extra model reasoning.
+    closing: What you need is not another upfront checklist—it is a harness that enforces state and evidence all the way to Done.
   workflow:
     eyebrow: Workflow
     title: Ask. Clarify. Let it run.
-    lead: Questions are skipped when nothing is ambiguous, and plan-only requests stay separate from execution.
+    lead: Questions are skipped when nothing is ambiguous, and plan-only requests (Backlog) stay separate from execution (Todo).
     steps:
       - step: "01"
         title: Request
@@ -81,24 +104,24 @@ landing:
         title: Plan
         actor: ai
         actorLabel: AI
-        text: Break the request into ordered tasks with explicit acceptance conditions.
+        text: Break the request into ordered tasks with explicit ## Acceptance bullets.
       - step: "03"
         title: Clarify
         actor: both
         actorLabel: Human + AI
-        text: Ask only when a human decision, preference, or scope choice is needed.
+        text: Ask only when human judgment is needed and seal the answer.
       - step: "04"
         title: Execute
         actor: ai
         actorLabel: AI
-        text: Work through tasks in dependency order and record completion evidence.
+        text: Follow dependencies and record verification evidence under ## Result.
       - step: "05"
         title: Complete
         actor: ai
         actorLabel: AI
-        text: Verify acceptance conditions and report the finished result.
+        text: Pass the completion gate across every acceptance bullet and report.
     adaptTitle: Change direction anytime.
-    adaptText: Add follow-up requirements mid-work and revise the plan and acceptance conditions. Mid-work updates take effect at the boundaries supported by your client.
+    adaptText: Add follow-up requirements mid-work and revise remaining tasks in a new plan revision without erasing completed evidence. Interruption timing follows your host client.
   humanOnTheLoop:
     eyebrow: Human on the Loop
     title: AI does the work. You stay in control.
@@ -116,80 +139,101 @@ landing:
       items:
         - Plan the work
         - Execute and verify
-        - Report progress
+        - Record evidence & finish
     harness:
       label: Agent Flow Kit
-      text: Supports both sides with structure, state-aware guidance, persistence, and progress reporting. AFK does not run models or execute tasks itself.
+      text: Supports both sides with a deterministic state machine, SHA-256 spec guards, local persistence, and turn-end reporting. AFK does not run models or execute tasks itself.
     note: Questions are reserved for unclear intent, human preferences, irreversible actions, or scope expansion—not rubber-stamp approvals on every step.
   features:
     eyebrow: Features
-    title: Four mechanics for delegating work.
+    title: Four mechanics Plan Mode doesn't give you.
     items:
-      - kind: plan
-        eyebrow: PLAN
-        title: Structured plans & tasks
-        text: Decompose large requests into executable tasks with explicit order and acceptance conditions.
-        visualTitle: Improve search feature
-        items:
-          - state: done
-            text: Gather requirements
-          - state: done
-            text: Design ranking rules
-          - state: todo
-            text: Implement search
-          - state: todo
-            text: Add tests
-      - kind: question
-        eyebrow: QUESTION
-        title: Ask only when needed
-        text: When intent or preference matters, pause on the open question instead of guessing silently.
-        visualTitle: How should search results be sorted?
-        items:
-          - text: By relevance
-          - text: Newest first
+      - kind: revision
+        eyebrow: REVISION
+        title: Revisioned replanning without losing history
+        text: When requirements change mid-work, AFK retires superseded unfinished tasks and adds updated ones in a new revision—keeping completed tasks locked as evidence.
+        visualTitle: Plan #1 · Mid-work revision
+        revision:
+          from: rev 1
+          to: rev 2
+          rows:
+            - id: "#1–#3"
+              state: done
+              badge: Kept as evidence
+              text: Audit, spec & search logic
+            - id: "#5"
+              state: retired
+              badge: Retired
+              text: Old basic empty state
+            - id: "#4"
+              state: todo
+              badge: Retained
+              text: Add automated tests
+            - id: "#6"
+              state: added
+              badge: Added
+              text: Improve empty-results view
+      - kind: gate
+        eyebrow: VERIFICATION GATE
+        title: Deterministic completion gate & spec locks
+        text: Confirmed specs are locked with SHA-256 hashes. A task cannot become Done until every ## Acceptance bullet is explicitly verified and ## Result evidence is written.
+        visualTitle: finish_task gate
+        gate:
+          command: "finish_task(plan_id=1, task_id=4, verified=[1, 2, 3])"
+          checks:
+            - label: spec_hash (SHA-256)
+              value: Intact
+            - label: "## Acceptance (1..=3)"
+              value: All 3 verified
+            - label: "## Result evidence"
+              value: Recorded
+          outcome: "✓ Gate passed → Task #4: Done"
+      - kind: handoff
+        eyebrow: HANDOFF & .afk/
+        title: Cross-session & cross-client continuity
+        text: Requests, plans, questions, and results live in project-local .afk/. Save a handoff note and pick up cleanly in a fresh session—or even another MCP client.
+        visualTitle: .afk/ + handoff
+        handoff:
+          tree:
+            - ".afk/"
+            - "├── afk.db        # state, dependencies & hashes"
+            - "├── plans/        # revisioned plans"
+            - "├── tasks/        # acceptance, attempts & Result"
+            - "├── requests/     # initial & follow-up requests"
+            - "└── questions/    # prompts & sealed answers"
+          noteLabel: "handoff (Attempt 1: claude-code → Attempt 2: codex)"
+          noteText: "Search logic implemented; remaining work is unit tests and empty-state edge cases."
       - kind: progress
-        eyebrow: PROGRESS
-        title: Automatic progress reports
-        text: A Stop Hook summarizes current progress at the end of each turn so you do not have to keep asking.
+        eyebrow: STOP HOOK
+        title: Zero-reasoning turn-end progress reports
+        text: A Stop Hook reads .afk/afk.db directly at turn end and prints a concise status line—so you stay informed without spending extra turns asking.
         note: Designed to avoid extra model reasoning or reporting tool calls. Display details vary by client.
         visualTitle: Turn-end report
         progress:
           percent: 60
-          label: 60%
-          detail: 3 of 5 tasks completed
+          tag: 0 model tokens
+          detail: Aggregated directly from SQLite (read-only, fail-open)
           banner: "AFK · Improve search feature [Doing] · 3/5 complete · Next: Add automated tests"
-      - kind: workspace
-        eyebrow: WORKSPACE
-        title: Cross-session continuity
-        text: Requests, plans, tasks, and questions stay in .afk/ inside your project so the next session can pick right up.
-        visualTitle: .afk/
-        tree:
-          - ".afk/"
-          - "├── plans/"
-          - "├── tasks/"
-          - "├── requests/"
-          - "├── questions/"
-          - "└── afk.db"
   efficiency:
-    eyebrow: Efficiency
-    title: Let AI focus on the work itself.
-    lead: Rather than burning context on bookkeeping, AFK offloads deterministic state management to a lightweight Rust binary.
+    eyebrow: State Machine & Efficiency
+    title: Backed by a state machine, not polite prompts.
+    lead: Prompt-only rules fade as context grows. Offloading deterministic transitions, hash checks, and progress aggregation to Rust + SQLite lets your agent focus on reasoning and code.
     ai:
       badge: AI Agent
       title: "AI handles: reasoning, creation & execution"
       items:
-        - Drafting plans
+        - Drafting & revising plans
         - Understanding specifications
         - Producing deliverables
-        - Verifying outcomes
+        - Running actual verification
     afk:
-      badge: AFK (Rust)
-      title: "AFK handles: deterministic coordination"
+      badge: AFK (Rust + SQLite)
+      title: "AFK handles: deterministic state & gates"
       items:
-        - Tracking state transitions
-        - Enforcing task order & dependencies
-        - Aggregating progress
-        - Persisting local data
+        - Enforcing transitions & dependencies
+        - Verifying SHA-256 spec integrity
+        - Gating open questions & pending requests
+        - Aggregating progress & persisting .afk/
     note: Lower management overhead and token efficiency are active design goals; comparative benchmarks against standalone agents will be published once measured.
   architecture:
     eyebrow: Architecture
@@ -204,7 +248,7 @@ landing:
       kitLabel: Agent Flow Kit (Plugin)
       kit:
         - name: MCP
-          role: State-aware workflow tools
+          role: State machine & verification gates
         - name: Skills
           role: Execution guidance
         - name: Hooks
@@ -214,7 +258,7 @@ landing:
         - name: Markdown
           role: Content edited with native tools
         - name: SQLite
-          role: State & dependency store
+          role: State, dependencies & hashes
     items:
       - icon: laptop
         title: Local-first
@@ -258,7 +302,7 @@ landing:
       link: /guide/installation
     cta:
       tagline: "Delegate work.\nStay in control."
-      sub: A lightweight harness for AI agents to carry out work.
+      sub: A lightweight harness that goes beyond Plan Mode.
       primary:
         text: Get started with AFK
         link: /guide/installation
