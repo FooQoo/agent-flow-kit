@@ -106,7 +106,7 @@ async function copyText(key: string, text: string) {
                 <i /><i /><i />
               </span>
               <span class="lp-demo__title">{{ c.hero.demo.header }}</span>
-              <span class="lp-demo__tag">{{ c.hero.demo.sampleBadge }}</span>
+              <span v-if="c.hero.demo.sampleBadge" class="lp-demo__tag">{{ c.hero.demo.sampleBadge }}</span>
             </div>
             <div class="lp-demo__body">
               <div
@@ -122,6 +122,7 @@ async function copyText(key: string, text: string) {
                   <p v-if="turn.kind === 'prompt'" class="lp-demo__prompt">
                     <span class="lp-demo__caret" aria-hidden="true">❯</span> {{ turn.text }}
                   </p>
+                  <p v-else-if="turn.kind === 'question'" class="lp-demo__question">{{ turn.text }}</p>
                   <p v-else-if="turn.kind === 'saved'" class="lp-demo__saved">{{ turn.text }}</p>
                   <p v-else class="lp-demo__reply">{{ turn.text }}</p>
                 </div>
@@ -153,7 +154,7 @@ async function copyText(key: string, text: string) {
               </div>
             </div>
           </div>
-          <figcaption class="lp-demo__caption">{{ c.hero.demo.caption }}</figcaption>
+          <figcaption v-if="c.hero.demo.caption" class="lp-demo__caption">{{ c.hero.demo.caption }}</figcaption>
         </figure>
       </div>
     </section>
@@ -921,6 +922,14 @@ async function copyText(key: string, text: string) {
 }
 .lp-demo__reply {
   color: #b8c4d0;
+}
+.lp-demo__question {
+  padding: 6px 10px;
+  border-left: 3px solid #e9b04f;
+  border-radius: 0 6px 6px 0;
+  background: rgba(233, 176, 79, 0.1);
+  color: #f4d28b;
+  font-size: 12px;
 }
 .lp-demo__saved {
   padding: 6px 10px;

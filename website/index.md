@@ -20,24 +20,26 @@ landing:
       link: https://github.com/FooQoo/agent-flow-kit
     meta: Claude Code / Codex · Local-first (.afk/) · Rust + SQLite · Open Source
     demo:
-      header: Cross-session resume & revisioned replanning via .afk/
-      sampleBadge: Sample
-      ariaLabel: Illustrative terminal showing Session 1 saving a handoff and Session 2 resuming from .afk/ with a mid-work requirement revised to rev 2
-      boundaryLabel: Next day · New session (Claude Code or Codex)
-      caption: Illustrative example. Exact formatting depends on the host client and hook configuration.
+      header: Claude Code / Codex + Agent Flow Kit
+      ariaLabel: Terminal flow showing Session 1 planning with one clarifying question and Session 2 resuming the next day with a mid-work requirement added
+      boundaryLabel: Next day · Resumed in a new session
       sessions:
-        - label: "Session #1 — Claude Code"
+        - label: "Session 1"
           turns:
             - kind: prompt
-              text: /agent-flow-kit:afk handoff
+              text: Improve the search feature and add tests
+            - kind: question
+              text: "Split into 5 tasks. One quick question: sort by relevance or newest first?"
+            - kind: prompt
+              text: Sort by relevance
             - kind: saved
-              text: "Saved handoff for #4 (3/5 done) → .afk/afk.db"
-        - label: "Session #2 — Resumed in a new session"
+              text: "Updated the plan and completed 3/5 tasks. State saved in .afk/."
+        - label: "Session 2"
           turns:
             - kind: prompt
-              text: Continue from last time, and also fix the empty-results view.
+              text: Continue from last time, and also fix the empty-results view
             - kind: reply
-              text: "Loaded Plan #1 (rev 1) & handoff from .afk/. Keeping #1–#3 as verified evidence and revising to rev 2."
+              text: "Loaded the saved plan. Keeping #1–#3 as verified evidence and adding the empty-results fix to the remaining work."
       status:
         title: Improve search feature
         revision: rev 2
@@ -46,13 +48,13 @@ landing:
         tasks:
           - state: done
             text: "#1–#3 Audit, spec & search logic"
-            tag: rev 1 evidence
+            tag: Kept as evidence
           - state: doing
             text: "#4 Add automated tests"
-            tag: from handoff
+            tag: Resumed
           - state: todo
             text: "#6 Fix empty-results view"
-            tag: added mid-work
+            tag: Added mid-work
   problem:
     eyebrow: Problem
     title: Drafting a plan is easy. Keeping it intact is hard.

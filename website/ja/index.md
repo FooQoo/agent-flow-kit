@@ -20,24 +20,26 @@ landing:
       link: https://github.com/FooQoo/agent-flow-kit
     meta: Claude Code / Codex 対応 · ローカル保存（.afk/） · オープンソース
     demo:
-      header: .afk/ による別セッション再開と途中の計画変更
-      sampleBadge: イメージ
-      ariaLabel: セッション1で引き継ぎメモを保存し、翌日のセッション2で追加の要望を取り込んで続きから再開するイメージ
-      boundaryLabel: 翌日 · 新しいセッション（Claude Code / Codex）
-      caption: ※ 動作イメージです。実際の表示は利用するクライアントや設定によって異なります。
+      header: Claude Code / Codex + Agent Flow Kit
+      ariaLabel: セッション1で計画と1点の確認を経て途中まで進め、翌日に別セッションで再開しつつ追加要望を計画へ反映する流れ
+      boundaryLabel: 翌日 · 別のセッションで再開
       sessions:
-        - label: "セッション 1 — Claude Code"
+        - label: "セッション 1"
           turns:
             - kind: prompt
-              text: /agent-flow-kit:afk handoff
+              text: 検索機能を改善して、テストも追加して
+            - kind: question
+              text: "計画を 5 件に分けました。1点だけ確認です：並び順は関連度順と新着順のどちらにしますか？"
+            - kind: prompt
+              text: 関連度順でお願い
             - kind: saved
-              text: "作業 #4 の引き継ぎメモを保存しました（3/5 完了）→ .afk/"
-        - label: "セッション 2 — 新しいセッションで再開"
+              text: "回答を反映して進め、3/5 件まで完了しました。（記録先: .afk/）"
+        - label: "セッション 2"
           turns:
             - kind: prompt
-              text: 前回の続きを進めて。検索結果が0件のときの表示も直して。
+              text: 前回の続きを進めて。検索結果が 0 件のときの表示も直して
             - kind: reply
-              text: ".afk/ から前回の計画と引き継ぎメモを読み込みました。終わった #1–#3 の記録を残したまま、残りの計画を更新して再開します。"
+              text: "前回の計画を読み込みました。終わった 3 件の記録は残したまま、残りに「0件表示の改善」を追加します。"
       status:
         title: 検索機能の改善
         revision: 第2版
@@ -49,7 +51,7 @@ landing:
             tag: 完了記録を保持
           - state: doing
             text: "#4 テストの追加"
-            tag: 引き継ぎから再開
+            tag: 続きから再開
           - state: todo
             text: "#6 検索0件表示の改善"
             tag: 途中で追加
