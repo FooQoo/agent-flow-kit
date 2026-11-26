@@ -28,17 +28,45 @@ AFK supports six recurring responsibilities across a piece of work:
 
 Structure (requests, plans, tasks, questions) is a means, not the goal. The harness exists to provide **guidance** (what to do next and what must be verified) and **continuity** (carrying durable state across turns and sessions).
 
-```text
-  Human (goals, decisions, direction changes)
-     ▲                                  ▲
-     │ natural conversation             │ turn-end progress (Stop Hook)
-     ▼                                  │
-  AI Agent (reasoning, planning, execution, verification)
-     ├── Native tools (Read / Write / Edit / Shell) ──▶ Project files & .afk/*.md
-     └── AFK MCP tools & Hooks ───────────────────────▶ .afk/afk.db (state & order)
-```
+<figure class="doc-diagram">
+  <svg viewBox="0 0 760 310" role="img" aria-label="Responsibility diagram showing Human, AI Agent, Native Tools, Agent Flow Kit, and project-local .afk files">
+    <defs>
+      <marker id="wh-en-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--vp-c-brand-1)" />
+      </marker>
+      <marker id="wh-en-arrow-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--vp-c-text-3)" />
+      </marker>
+    </defs>
 
-*(Conceptual separation of responsibilities. AFK does not proxy every message between the human and the AI agent.)*
+    <rect x="230" y="16" width="300" height="58" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
+    <text x="380" y="40" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="14" font-weight="700">Human</text>
+    <text x="380" y="60" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="12">Goals · Key decisions · Direction changes</text>
+
+    <line x1="380" y1="74" x2="380" y2="112" stroke="var(--vp-c-text-3)" stroke-width="1.5" marker-start="url(#wh-en-arrow-muted)" marker-end="url(#wh-en-arrow-muted)" />
+    <text x="392" y="97" fill="var(--vp-c-text-2)" font-size="11.5">Natural conversation</text>
+
+    <rect x="210" y="116" width="340" height="60" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-brand-1)" stroke-width="1.5" />
+    <text x="380" y="141" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="14" font-weight="700">AI Agent (Claude Code / Codex)</text>
+    <text x="380" y="161" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="12">Reasoning · Planning · Execution · Verification</text>
+
+    <path d="M 290 176 L 190 218" stroke="var(--vp-c-text-3)" stroke-width="1.5" fill="none" marker-end="url(#wh-en-arrow-muted)" />
+    <path d="M 470 176 L 560 218" stroke="var(--vp-c-brand-1)" stroke-width="1.8" fill="none" marker-end="url(#wh-en-arrow)" />
+
+    <rect x="30" y="222" width="310" height="66" rx="12" fill="var(--vp-c-bg)" stroke="var(--vp-c-divider)" stroke-width="1.5" />
+    <text x="185" y="247" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="13.5" font-weight="700">Native Tools (Read / Write / Edit / Shell)</text>
+    <text x="185" y="269" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="12">Project files &amp; .afk/*.md content</text>
+
+    <rect x="410" y="222" width="320" height="66" rx="12" fill="var(--vp-c-brand-soft)" stroke="var(--vp-c-brand-1)" stroke-width="1.5" />
+    <text x="570" y="247" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="13.5" font-weight="700">Agent Flow Kit (Plugin)</text>
+    <text x="570" y="269" text-anchor="middle" fill="var(--vp-c-text-1)" font-size="12">State, order &amp; gates in .afk/afk.db</text>
+
+    <path d="M 680 222 L 680 45 L 538 45" stroke="var(--vp-c-brand-1)" stroke-width="1.5" stroke-dasharray="5 4" fill="none" marker-end="url(#wh-en-arrow)" />
+    <text x="692" y="138" fill="var(--vp-c-brand-1)" font-size="11.5" font-weight="600">Turn-end</text>
+    <text x="692" y="154" fill="var(--vp-c-brand-1)" font-size="11.5" font-weight="600">progress</text>
+  </svg>
+  <figcaption>Conceptual separation of responsibilities. AFK does not proxy every message between the human and the agent.</figcaption>
+</figure>
 
 ## Why a state-aware harness—not just a Skill
 

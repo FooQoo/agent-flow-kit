@@ -80,15 +80,15 @@ export default defineConfig({
             items: [
               { text: 'Agent Flow Kit とは', link: '/ja/guide/getting-started' },
               { text: 'インストール', link: '/ja/guide/installation' },
-              { text: 'クイックスタート', link: '/ja/guide/quickstart' },
+              { text: '最初の仕事を任せる', link: '/ja/guide/quickstart' },
             ],
           },
           {
             text: '設計思想',
             items: [
-              { text: 'Workflow Harness', link: '/ja/concepts/workflow-harness' },
-              { text: 'Work Model', link: '/ja/concepts/work-model' },
-              { text: 'Human in / on the Loop', link: '/ja/concepts/human-in-on-the-loop' },
+              { text: '進行を支える仕組み', link: '/ja/concepts/workflow-harness' },
+              { text: '仕事の進め方と 4 つの要素', link: '/ja/concepts/work-model' },
+              { text: '人間と AI の役割分担', link: '/ja/concepts/human-in-on-the-loop' },
               { text: '既存の手法・ツールとの違い', link: '/ja/concepts/positioning' },
             ],
           },
@@ -106,7 +106,7 @@ export default defineConfig({
           },
         ],
         footer: {
-          message: 'Agent Flow Kit — Delegate work. Stay in control.',
+          message: 'Agent Flow Kit — 仕事は AI に。主導権はあなたに。',
           copyright: 'Open Source · Anthropic および OpenAI の公式製品ではありません。',
         },
         outline: { label: 'このページの内容' },

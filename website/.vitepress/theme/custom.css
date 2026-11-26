@@ -54,3 +54,29 @@
 .VPHome:has(.landing) {
   margin-bottom: 0;
 }
+
+/* Responsive SVG concept diagrams inside documentation pages */
+.doc-diagram {
+  margin: 24px 0;
+  padding: 20px;
+  overflow-x: auto;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+}
+.doc-diagram svg {
+  display: block;
+  width: 100%;
+  min-width: 560px;
+  max-width: 780px;
+  height: auto;
+  margin: 0 auto;
+  font-family: var(--vp-font-family-base);
+}
+.doc-diagram figcaption {
+  margin-top: 12px;
+  color: var(--vp-c-text-2);
+  font-size: 13px;
+  text-align: center;
+}
+

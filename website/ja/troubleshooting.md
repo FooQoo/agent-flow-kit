@@ -7,9 +7,9 @@ description: Agent Flow Kit の導入・MCP 起動・Hook・再開・データ�
 
 *問題に直面したとき、既存の計画やデータを失わずに原因を特定して復旧するためのガイドです。*
 
-## 1. Plugin を導入できない
+## 1. プラグインを導入できない
 
-- **確認すること:** 対応 OS/アーキテクチャ（macOS `arm64`/`x86_64`、Linux `x86_64`/`arm64`）、クライアントのバージョン、`https://github.com/FooQoo/agent-flow-kit.git` への通信可否を確認します。
+- **確認すること:** 対応 OS/CPU（macOS Apple Silicon / Intel、Linux `x86_64` / `arm64`）、クライアントのバージョン、`https://github.com/FooQoo/agent-flow-kit.git` への通信可否を確認します。
 - **解決手順:** [インストール](/ja/guide/installation) のコマンドを再実行します。ネットワーク制限がある環境では [GitHub Releases](https://github.com/FooQoo/agent-flow-kit/releases) のオフライン向けアーカイブを利用してください。
 - **正常な状態:** クライアントのプラグイン一覧に `agent-flow-kit` が表示され、`/agent-flow-kit:afk`（Claude Code）または `$agent-flow-kit:afk`（Codex）が利用できます。
 - **解決しない場合:** OS・クライアント版・エラー出力を添えて [GitHub Issues](https://github.com/FooQoo/agent-flow-kit/issues) へ報告してください。
